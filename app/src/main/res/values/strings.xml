@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Dostavka</string>
+    <string name="title_activity_main">MainActivity</string>
+
+    <string name="tvLoginActivityLogin">Номер телефона</string>
+    <string name="tvLoginActivityPass">Пароль</string>
+    <string name="btLoginActivityPass">ВОЙТИ</string>
+    <string name="error_login">Ошибка при попытке входа. Проверьте вводимые данные и попробуйте снова</string>
+    <string name="checkSaveActivityLogin">Запомнить</string>
+
+    <string name="tvBalanceMainActivity">Баланс</string>
+    <string name="switchMainActivity">Онлайн</string>
+    <string name="rub">Р</string>
+
+    <string name="fieldNameCustomer">nameCustomer</string>
+    <string name="fieldTownCustomer">townCustomer</string>
+    <string name="fieldCoastOrder">coastOrder</string>
+</resources>
