@@ -37,13 +37,11 @@ public class MainActivity extends AppCompatActivity {
 
     private ListView listMainActivity;
     private OrderAdapter adapter;
-    private ArrayList<Map<String, String>> data;
+
 
     public static final String COLLECTION_NAME = "work";
 
-    private String nameCast = "NameCustomer";
-    private String townCast = "TownCustomer";
-    private String coastCast ="CoastOrder";
+
 
     private DocumentFields fields;
 
@@ -75,10 +73,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDocumentFound(List<DocumentInfo> documentInfos) {
                 // Вылетает приложение
-                if (documentInfos != null){
+                setAdapter(documentInfos);
 
-                    setAdapter(documentInfos);
-                    }
             }
 
             @Override
@@ -90,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
 
    private void setAdapter(List<DocumentInfo> documentInfos) {
        Log.i("Loog", "Получен лист, создание адаптера");
-        adapter = new OrderAdapter(MainActivity.this, documentInfos);
+        adapter = new OrderAdapter(this, documentInfos);
         listMainActivity.setAdapter(adapter);
             }
 
@@ -105,8 +101,5 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void starttt(View view) {
-        Log.i("Loog", "Кнопка отработала1");
 
-    }
 }

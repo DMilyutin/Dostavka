@@ -1,6 +1,7 @@
 package com.example.dima.dostavka.Helper;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,9 +23,9 @@ public class OrderAdapter extends BaseAdapter {
 
 
     public OrderAdapter(Context context1, List<DocumentInfo> list1){
-        context = context1;
+        //context = context1;
         list = list1;
-        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        inflater = (LayoutInflater) context1.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
@@ -47,11 +48,14 @@ public class OrderAdapter extends BaseAdapter {
         View view = view1;
         if(view == null){view = inflater.inflate(R.layout.for_list_main_activity, viewGroup, false);}
 
-        Order order = getOrder(position);
+        //list.get(position).getFields();
+        //Order order = getOrder(position);
 
-        ((TextView) view.findViewById(R.id.tvCustomerList)).setText(order.getNameCastomer());
-        ((TextView) view.findViewById(R.id.tvTownList)).setText(order.getTownCastomer());
-        ((TextView) view.findViewById(R.id.tvCoastList)).setText(order.getCoastOrder());
+        ((TextView) view.findViewById(R.id.tvCustomerList)).setText((String) list.get(position).getFields().get("nameCustomer") );
+        ((TextView) view.findViewById(R.id.tvTownList)).setText((String) list.get(position).getFields().get("townCustomer") );
+        ((TextView) view.findViewById(R.id.tvCoastList)).setText((String) list.get(position).getFields().get("coastOrder") );
+
+
 
         return view;
     }
