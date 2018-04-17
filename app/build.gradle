@@ -30,7 +30,4 @@ dependencies {
     implementation 'ru.prof-itgroup:scorocode_sdk:1.0.2'
 
 
-
-
-
 }

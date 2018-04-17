@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Activities.DetailOrder">
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+            <TextView
+                android:textSize="30sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:textAlignment="center"
+                android:layout_gravity="center"
+                android:id="@+id/nameCustomerDetail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Додо Пицца"
+                android:textColor="@color/colorText"
+                android:textSize="30sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:textSize="30sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+
+            <TextView
+                android:layout_gravity=""
+                android:textAlignment="center"
+                android:id="@+id/townCustomerDetail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="г. Балашиха Пр-кт Ленина 87"
+                android:textColor="@color/colorText"
+                android:textSize="20sp"
+                 />
+
+            <TextView
+                android:textSize="30sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                 />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvTownCustomerDetail1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+
+                    android:text="@string/tvDoctavkaOrderDetail"
+                    android:textColor="@color/colorText"
+                    android:textSize="20sp"/>
+
+
+                <TextView
+                    android:id="@+id/tvCountOrderCustomerDetail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2"
+                    android:textColor="@color/colorText"
+                    android:textSize="20sp"
+                    app:layout_constraintStart_toEndOf="@+id/tvTownCustomerDetail1"
+                    app:layout_constraintTop_toBottomOf="@+id/townCustomerDetail" />
+            </LinearLayout>
+
+            <TextView
+                android:textSize="30sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvCoastOrderCustomerDetail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:text="400"
+                    android:textColor="@color/colorText"
+                    android:textSize="30sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tvTownCustomerDetail1" />
+
+                <TextView
+                    android:id="@+id/textView9"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:text="@string/rub"
+                    android:textColor="@color/colorText"
+                    android:textSize="30sp"
+                    app:layout_constraintStart_toEndOf="@+id/tvCoastOrderCustomerDetail"
+                    app:layout_constraintTop_toBottomOf="@+id/tvTownCustomerDetail1" />
+            </LinearLayout>
+
+            <TextView
+                android:textSize="30sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+
+            <Button
+                android:layout_gravity="center"
+                android:id="@+id/btTakeOrderDetail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/btOrderDetail"
+                android:textColor="@color/colorText"
+                android:textSize="15sp"
+                 />
+        </LinearLayout>
+
+
+</LinearLayout>

@@ -1,64 +1,81 @@
 package com.example.dima.dostavka.Activities;
 
-
 import android.content.Context;
 import android.content.Intent;
 
-import android.support.v4.provider.DocumentFile;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import android.util.Log;
+
 import android.view.View;
-
-import android.widget.Button;
+import android.widget.AdapterView;
+import android.widget.CompoundButton;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
-
+import android.widget.Switch;
 import android.widget.Toast;
-
 
 import com.example.dima.dostavka.Helper.OrderAdapter;
 import com.example.dima.dostavka.R;
 
-
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 
 import com.example.dima.dostavka.Helper.*;
 import ru.profit_group.scorocode_sdk.Callbacks.CallbackFindDocument;
 import ru.profit_group.scorocode_sdk.scorocode_objects.DocumentInfo;
 import ru.profit_group.scorocode_sdk.scorocode_objects.Query;
 
+import static android.widget.Toast.LENGTH_SHORT;
+
 public class MainActivity extends AppCompatActivity {
 
     private ListView listMainActivity;
     private OrderAdapter adapter;
 
-
-    public static final String COLLECTION_NAME = "work";
-
-
+    private static final String COLLECTION_NAME = "work";
 
     private DocumentFields fields;
 
+    private Switch aSwitch;
 
+    void online(){
+        Toast.makeText(this, "onLine", LENGTH_SHORT).show();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        fields = new DocumentFields(this);
+        aSwitch = findViewById(R.id.swOnline);
 
+        aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(b) {
+                    Toast.makeText(MainActivity.this, "onLine", LENGTH_SHORT).show();
+
+                }
+                else
+                    Toast.makeText(MainActivity.this, "offLine", LENGTH_SHORT).show();
+            }
+        });
+
+
+
+        fields = new DocumentFields(this);
 
         listMainActivity = findViewById(R.id.listMainActivity);
 
-
-        //startWork();
+        listMainActivity.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(MainActivity.this, DetailOrder.class);
+                startActivity(intent);
+                // Передача данных заказа в DetailOrder
+                // TODO
+            }
+        });
 
    }
 
@@ -90,14 +107,15 @@ public class MainActivity extends AppCompatActivity {
         listMainActivity.setAdapter(adapter);
             }
 
-            public static void display(Context context) {  // Метод активации главного экрана
+            public static void display(Context context) {
                 context.startActivity(new Intent(context, MainActivity.class));
             }
 
     @Override
     protected void onResume() {
         super.onResume();
-        startWork();
+        if (aSwitch.isChecked()){
+        startWork();}
     }
 
 

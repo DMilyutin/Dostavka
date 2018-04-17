@@ -8,11 +8,14 @@
     <string name="error_login">Ошибка при попытке входа. Проверьте вводимые данные и попробуйте снова</string>
     <string name="checkSaveActivityLogin">Запомнить</string>
 
-    <string name="tvBalanceMainActivity">Баланс</string>
+    <string name="tvBalanceMainActivity">Баланс:</string>
     <string name="switchMainActivity">Онлайн</string>
     <string name="rub">Р</string>
 
     <string name="fieldNameCustomer">nameCustomer</string>
     <string name="fieldTownCustomer">townCustomer</string>
     <string name="fieldCoastOrder">coastOrder</string>
+
+    <string name="btOrderDetail">Принять заказ</string>
+    <string name="tvDoctavkaOrderDetail">Доставок: </string>
 </resources>
