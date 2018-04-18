@@ -70,8 +70,8 @@ public class MainActivity extends AppCompatActivity {
         listMainActivity.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(MainActivity.this, DetailOrder.class);
-                startActivity(intent);
+              //  Intent intent = new Intent(MainActivity.this, DetailOrder.class);
+               // startActivity(intent);
                 // Передача данных заказа в DetailOrder
                 // TODO
             }
@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         query.findDocuments(new CallbackFindDocument() {
             @Override
             public void onDocumentFound(List<DocumentInfo> documentInfos) {
-                // Вылетает приложение
+                Log.i("Loog", "Документ получен!");
                 setAdapter(documentInfos);
 
             }
@@ -114,8 +114,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (aSwitch.isChecked()){
-        startWork();}
+
+        startWork();
     }
 
 
