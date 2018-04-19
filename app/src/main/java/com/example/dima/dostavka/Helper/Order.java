@@ -3,28 +3,28 @@ package com.example.dima.dostavka.Helper;
 public class Order {
 
     private String id;
-   private String nameCastomer;
-   private String townCastomer;
+   private String nameCustomer;
+   private String addressCustomer;
    private String coastOrder;
    private String numberOfAddress;
 
 
-    public Order(String name, String town, String coast, String adress, String iD){
+    public Order(String name, String address, String coast, String numOfAddress, String iD){
         id = iD;
-        nameCastomer = name;
-        townCastomer = town;
+        nameCustomer = name;
+        addressCustomer = address;
         coastOrder = coast;
-        numberOfAddress = adress;
+        numberOfAddress = numOfAddress;
     }
 
-    public String getNameCastomer() {
-        return nameCastomer;
+    public String getNameCustomer() {
+        return nameCustomer;
     }
 
     public String getNumberOfAddress() { return numberOfAddress; }
 
-    public String getTownCastomer() {
-        return townCastomer;
+    public String getAddressCustomer() {
+        return addressCustomer;
     }
 
 

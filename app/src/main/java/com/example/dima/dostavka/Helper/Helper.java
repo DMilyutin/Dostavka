@@ -6,7 +6,8 @@ import android.widget.Toast;
 public class Helper {
 
 
-   public static void showToast(Context context, int textRes) {
-        Toast.makeText(context, context.getString(textRes), Toast.LENGTH_SHORT).show();
+   public static void showToast(Context context, String textRes) {
+        Toast.makeText(context, (textRes), Toast.LENGTH_SHORT).show();
     }
+
 }

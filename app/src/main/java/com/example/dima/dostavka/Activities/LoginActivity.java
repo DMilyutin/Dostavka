@@ -22,8 +22,8 @@ import ru.profit_group.scorocode_sdk.scorocode_objects.User;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private final String APPLICATION_ID = "c312b5a7b1794220a85b89079250e64e";
-    private final String CLIENT_KEY = "aec9813472954766897c74a55815d4e1";
+    private static final String APPLICATION_ID = "c312b5a7b1794220a85b89079250e64e";
+    private static final String CLIENT_KEY = "aec9813472954766897c74a55815d4e1";
     private static final String MASTER_KEY = "ec67c7fce9fb4f63a234d2d708f3a9c6";
 
     private static final int PERMISSIONS_INTERNET = 60;
@@ -33,8 +33,9 @@ public class LoginActivity extends AppCompatActivity {
     final String SAVED_TEXT_NUMBER = "saved_number";
     final String SAVED_TEXT_PASS = "saved_password";
 
-    private String saveLogin ;
-    private String savePass ;
+
+
+
 
     private EditText edLogin;
     private EditText edPass;
@@ -59,6 +60,8 @@ public class LoginActivity extends AppCompatActivity {
         ScorocodeSdk.initWith(APPLICATION_ID, CLIENT_KEY,MASTER_KEY, null,null,null,null);
 
         checkPreferences();
+
+
 
         btLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,6 +93,7 @@ public class LoginActivity extends AppCompatActivity {
         User user = new User();
         user.login(edLogin.getText().toString(), edPass.getText().toString(), new CallbackLoginUser() {
 
+
             @Override
             public void onLoginSucceed(ResponseLogin responseLogin) {
                 prBarLogin.setVisibility(ProgressBar.INVISIBLE);
@@ -100,7 +104,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onLoginFailed(String errorCode, String errorMessage) {
                 prBarLogin.setVisibility(ProgressBar.INVISIBLE);
-                Helper.showToast(getBaseContext(), R.string.error_login);
+                Helper.showToast(getBaseContext(), errorMessage);
                 btLogin.setClickable(true);
             }
         });
@@ -117,11 +121,11 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void newPreferences(String login, String pass){
-        preferences = getPreferences(MODE_PRIVATE);
+            preferences = getPreferences(MODE_PRIVATE);
             SharedPreferences.Editor editor = preferences.edit();
             editor.putString(SAVED_TEXT_NUMBER, login);
             editor.putString(SAVED_TEXT_PASS, pass);
-            editor.commit();
+            editor.apply();
 
     }
 
