@@ -1,11 +1,11 @@
 package com.example.dima.dostavka.Activities;
 
 import android.Manifest;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -28,6 +28,10 @@ public class LoginActivity extends AppCompatActivity {
 
     private static final int PERMISSIONS_INTERNET = 60;
 
+    private SharedPreferences preferences ;
+
+    final String SAVED_TEXT_NUMBER = "saved_number";
+    final String SAVED_TEXT_PASS = "saved_password";
 
     private String saveLogin ;
     private String savePass ;
@@ -54,35 +58,52 @@ public class LoginActivity extends AppCompatActivity {
 
         ScorocodeSdk.initWith(APPLICATION_ID, CLIENT_KEY,MASTER_KEY, null,null,null,null);
 
+        checkPreferences();
+
         btLogin.setOnClickListener(new View.OnClickListener() {
-
-
             @Override
             public void onClick(View view) {
+
+                if (chSave.isChecked()){
+                    if (!checkPreferences()){
+                        newPreferences(edLogin.getText().toString(), edPass.getText().toString());
+                    }
+                    else {
+                        edLogin.setText(preferences.getString(SAVED_TEXT_NUMBER, ""));
+                        edPass.setText(preferences.getString(SAVED_TEXT_PASS, ""));
+                    }
+                }
+
                 btLogin.setClickable(false);
+
                 prBarLogin.setVisibility(ProgressBar.VISIBLE);
-                User user = new User();
-                user.login(edLogin.getText().toString(), edPass.getText().toString(), new CallbackLoginUser() {
 
-                    @Override
-                    public void onLoginSucceed(ResponseLogin responseLogin) {
-                        prBarLogin.setVisibility(ProgressBar.INVISIBLE);
-                        btLogin.setClickable(true);
-                        MainActivity.display(LoginActivity.this);
-                    }
-
-                    @Override
-                    public void onLoginFailed(String errorCode, String errorMessage) {
-                        prBarLogin.setVisibility(ProgressBar.INVISIBLE);
-                        Helper.showToast(getBaseContext(), R.string.error_login);
-                        btLogin.setClickable(true);
-                    }
-                });
+                loging();
 
             }
         });
 
 
+    }
+
+    private void loging(){
+        User user = new User();
+        user.login(edLogin.getText().toString(), edPass.getText().toString(), new CallbackLoginUser() {
+
+            @Override
+            public void onLoginSucceed(ResponseLogin responseLogin) {
+                prBarLogin.setVisibility(ProgressBar.INVISIBLE);
+                btLogin.setClickable(true);
+                MainActivity.display(LoginActivity.this);
+            }
+
+            @Override
+            public void onLoginFailed(String errorCode, String errorMessage) {
+                prBarLogin.setVisibility(ProgressBar.INVISIBLE);
+                Helper.showToast(getBaseContext(), R.string.error_login);
+                btLogin.setClickable(true);
+            }
+        });
     }
 
 
@@ -93,6 +114,28 @@ public class LoginActivity extends AppCompatActivity {
             requestPermissions(new String[]{Manifest.permission.INTERNET}, PERMISSIONS_INTERNET);
             }
 
+    }
+
+    private void newPreferences(String login, String pass){
+        preferences = getPreferences(MODE_PRIVATE);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString(SAVED_TEXT_NUMBER, login);
+            editor.putString(SAVED_TEXT_PASS, pass);
+            editor.commit();
+
+    }
+
+    private boolean checkPreferences(){
+        preferences = getPreferences(MODE_PRIVATE);
+        String login = preferences.getString(SAVED_TEXT_NUMBER, "");
+        String pass = preferences.getString(SAVED_TEXT_PASS,"");
+        if (!login.isEmpty()&&!pass.isEmpty()){
+            edLogin.setText(login);
+            edPass.setText(pass);
+            chSave.setChecked(true);
+            return true;
+        }
+        else return false;
     }
 
 
