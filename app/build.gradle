@@ -2,6 +2,10 @@ apply plugin: 'com.android.application'
 
 
 android {
+    packagingOptions {
+        exclude 'META-INF/rxjava.properties'
+    }
+
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.example.dima.dostavka"

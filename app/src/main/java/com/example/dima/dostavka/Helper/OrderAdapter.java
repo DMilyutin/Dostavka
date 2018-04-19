@@ -13,17 +13,16 @@ import com.example.dima.dostavka.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import ru.profit_group.scorocode_sdk.scorocode_objects.Document;
 import ru.profit_group.scorocode_sdk.scorocode_objects.DocumentInfo;
 
 public class OrderAdapter extends BaseAdapter {
 
-    Context context;
+
     LayoutInflater inflater;
     List<DocumentInfo> list;
 
-
     public OrderAdapter(Context context1, List<DocumentInfo> list1){
-        //context = context1;
         list = list1;
         inflater = (LayoutInflater) context1.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -48,19 +47,21 @@ public class OrderAdapter extends BaseAdapter {
         View view = view1;
         if(view == null){view = inflater.inflate(R.layout.for_list_main_activity, viewGroup, false);}
 
-        //list.get(position).getFields();
-        //Order order = getOrder(position);
-
         ((TextView) view.findViewById(R.id.tvCustomerList)).setText((String) list.get(position).getFields().get("nameCustomer") );
         ((TextView) view.findViewById(R.id.tvTownList)).setText((String) list.get(position).getFields().get("townCustomer") );
         ((TextView) view.findViewById(R.id.tvCoastList)).setText((String) list.get(position).getFields().get("coastOrder") );
 
-
-
         return view;
     }
 
-    Order getOrder(int position){
-        return ((Order) getItem(position));
+    public Order getOrder(int position){
+
+        Order order = new Order(list.get(position).getFields().get("nameCustomer").toString(),
+                list.get(position).getFields().get("townCustomer").toString(),
+                list.get(position).getFields().get("coastOrder").toString(),
+                list.get(position).getFields().get("numberOfAddresses").toString(),
+                list.get(position).getId());
+        return order;
     }
+
 }

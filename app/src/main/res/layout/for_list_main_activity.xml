@@ -20,7 +20,7 @@
 
     <TextView
         android:id="@+id/tvCustomerList"
-        android:layout_width="12dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"

@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.dima.dostavka.Helper.OrderAdapter;
@@ -54,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if(b) {
                     Toast.makeText(MainActivity.this, "onLine", LENGTH_SHORT).show();
-
+                    startWork();
                 }
                 else
                     Toast.makeText(MainActivity.this, "offLine", LENGTH_SHORT).show();
@@ -70,10 +71,20 @@ public class MainActivity extends AppCompatActivity {
         listMainActivity.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-              //  Intent intent = new Intent(MainActivity.this, DetailOrder.class);
-               // startActivity(intent);
-                // Передача данных заказа в DetailOrder
-                // TODO
+                Order order = adapter.getOrder(i);
+                Intent intent = new Intent(MainActivity.this, DetailOrder.class);
+
+                String id = order.getIdOrder();
+                String name  = order.getNameCastomer();
+                String town  = order.getTownCastomer();
+                String coast = order.getCoastOrder();
+                String adr   = order.getNumberOfAddress();
+
+                String[] orderS = {name, town, coast, adr, id};
+
+                intent.putExtra("Order", orderS);
+                startActivity(intent);
+
             }
         });
 
@@ -81,11 +92,11 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-   public void startWork() {
-       Log.i("Loog", "Вход startWork");
+        public void startWork() {
+        Log.i("Loog", "Вход startWork");
         Query query = new Query(COLLECTION_NAME);
        // query.setFieldsForSearch(list);
-       Log.i("Loog", "Запуск запроса");
+        Log.i("Loog", "Запуск запроса");
         query.findDocuments(new CallbackFindDocument() {
             @Override
             public void onDocumentFound(List<DocumentInfo> documentInfos) {
@@ -101,22 +112,22 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-   private void setAdapter(List<DocumentInfo> documentInfos) {
-       Log.i("Loog", "Получен лист, создание адаптера");
+        private void setAdapter(List<DocumentInfo> documentInfos) {
+        Log.i("Loog", "Получен лист, создание адаптера");
         adapter = new OrderAdapter(this, documentInfos);
         listMainActivity.setAdapter(adapter);
-            }
+        }
 
-            public static void display(Context context) {
-                context.startActivity(new Intent(context, MainActivity.class));
-            }
+        public static void display(Context context) {
+            context.startActivity(new Intent(context, MainActivity.class));
+        }
 
-    @Override
-    protected void onResume() {
+        @Override
+         protected void onResume() {
         super.onResume();
 
         startWork();
-    }
+        }
 
 
 
