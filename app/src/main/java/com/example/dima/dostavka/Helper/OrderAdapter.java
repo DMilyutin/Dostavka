@@ -1,7 +1,6 @@
 package com.example.dima.dostavka.Helper;
 
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,10 +9,8 @@ import android.widget.TextView;
 
 import com.example.dima.dostavka.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import ru.profit_group.scorocode_sdk.scorocode_objects.Document;
 import ru.profit_group.scorocode_sdk.scorocode_objects.DocumentInfo;
 
 public class OrderAdapter extends BaseAdapter {
@@ -47,9 +44,12 @@ public class OrderAdapter extends BaseAdapter {
         View view = view1;
         if(view == null){view = inflater.inflate(R.layout.for_list_main_activity, viewGroup, false);}
 
-        ((TextView) view.findViewById(R.id.tvCustomerList)).setText((String) list.get(position).getFields().get("nameCustomer") );
-        ((TextView) view.findViewById(R.id.tvTownList)).setText((String) list.get(position).getFields().get("townCustomer") );
-        ((TextView) view.findViewById(R.id.tvCoastList)).setText((String) list.get(position).getFields().get("coastOrder") );
+        Order orgerForList = getOrder(position);
+
+        ((TextView) view.findViewById(R.id.tvCustomerList)).setText(orgerForList.getNameCustomer());
+        ((TextView) view.findViewById(R.id.tvAddressList)).setText(orgerForList.getAddressCustomer());
+        ((TextView) view.findViewById(R.id.tvCoastList)).setText(orgerForList.getCoastOrder());
+        ((TextView) view.findViewById(R.id.tvNumberOfAddressList)).setText(orgerForList.getNumberOfAddress());
 
         return view;
     }

@@ -11,12 +11,10 @@ import android.widget.Toast;
 
 import com.example.dima.dostavka.Helper.Helper;
 import com.example.dima.dostavka.Helper.Order;
+import com.example.dima.dostavka.Helper.myEnum;
 import com.example.dima.dostavka.R;
 
-import java.util.List;
-
 import ru.profit_group.scorocode_sdk.Callbacks.CallbackDocumentSaved;
-import ru.profit_group.scorocode_sdk.Callbacks.CallbackFindDocument;
 import ru.profit_group.scorocode_sdk.Callbacks.CallbackGetDocumentById;
 import ru.profit_group.scorocode_sdk.Callbacks.CallbackRemoveDocument;
 import ru.profit_group.scorocode_sdk.Callbacks.CallbackUpdateDocument;
@@ -34,10 +32,17 @@ public class DetailOrder extends AppCompatActivity {
     private TextView coast;
     private TextView address;
     private Button btTakeOrder;
-    private final Document document = new Document("work");
-    Document newDocument = new Document("history_work_balashiha");
+
+    private String COLLECTION_HISTORY_WORK_BALASHIH = "history_work_balashiha";
+    private String COLLECTION_WORK_BALASHIHA = "work_balashiha";
+
+
+    private final Document document = new Document(COLLECTION_WORK_BALASHIHA);
+    Document newDocument = new Document(COLLECTION_HISTORY_WORK_BALASHIH);
     Order order;
     String num;
+    String idDriver;
+
 
     private String latForMap = "55.7979";
     private String lonForMap = "37.9375";
@@ -58,6 +63,7 @@ public class DetailOrder extends AppCompatActivity {
 
         String[] orderS = intent.getStringArrayExtra("Order");
         order = new Order(orderS[0], orderS[1],orderS[2],orderS[3], orderS[4]);
+        idDriver = intent.getStringExtra("IdDriver");
 
         getOrderFromIntent(order);
 
@@ -65,38 +71,60 @@ public class DetailOrder extends AppCompatActivity {
         btTakeOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(btTakeOrder.getText().toString().equals("Принять заказ")){
-
-               // removeOrderFromActivWork(document);
-                addOrderInHistory(order);
-
-
-                // TODO Продолжение?
-                //navigatorStart();
-                btTakeOrder.setText("Заказ выполнен");
-            }else {
-                    Query query = new Query("history_work_balashiha");
-                    query.equalTo("historyIdWork", order.getIdOrder());
-
-                    Update update = new Update().set("historyStatusOrder", true);
-                    query.updateDocument(update, new CallbackUpdateDocument() {
-                        @Override
-                        public void onUpdateSucceed(ResponseUpdate responseUpdate) {
-                            Helper.showToast(DetailOrder.this, "Доставка закрыта");
-                        }
-
-                        @Override
-                        public void onUpdateFailed(String errorCode, String errorMessage) {
-                                Helper.showToast(DetailOrder.this, errorMessage);
-                        }
-                    });
-                    btTakeOrder.setText("Принять заказ");
-                    onBackPressed();
-                }
+                clickButton(btTakeOrder.getText().toString());
             }
         });
 
     }
+
+    private void clickButton(String textButton){
+        Query query = new Query(COLLECTION_HISTORY_WORK_BALASHIH);
+        query.equalTo("historyIdWork", order.getIdOrder());
+        if(textButton == null){return;}
+
+        switch (textButton){
+            case "Принять заказ" :
+                removeOrderFromActivWork(document);
+                addOrderInHistory(order);
+                btTakeOrder.setText("Забрал заказ");
+                // Через сколько буду
+                // navigatorStart();
+                break;
+
+            case "Забрал заказ" :
+                btTakeOrder.setText("Доставил заказ");
+                upDataHistoriStatusOrder(false, query);
+                // navigatorStart();
+                break;
+            case "Доставил заказ" :
+
+                btTakeOrder.setText("Взять заказ");
+                upDataHistoriStatusOrder(true, query);
+                onBackPressed();
+                break;
+
+            default: Helper.showToast(DetailOrder.this, "Не известно");
+            break;
+        }
+
+    }
+
+    private void upDataHistoriStatusOrder(Boolean b, Query query){
+        Update update = new Update().set("historyStatusOrder", b);
+        query.updateDocument(update, new CallbackUpdateDocument() {
+            @Override
+            public void onUpdateSucceed(ResponseUpdate responseUpdate) {
+
+            }
+
+            @Override
+            public void onUpdateFailed(String errorCode, String errorMessage) {
+                Helper.showToast(DetailOrder.this, errorMessage);
+            }
+        });
+    }
+
+
 
     private void navigatorStart() {
         Uri uri = Uri.parse("yandexnavi://show_point_on_map").buildUpon()
@@ -116,8 +144,8 @@ public class DetailOrder extends AppCompatActivity {
             newDocument.setField("historyAddressCustomer", order.getAddressCustomer());
             newDocument.setField("historyCoastOrder", order.getCoastOrder());
             newDocument.setField("historyIdWork", order.getIdOrder());
-            // TODO Номер водителя
-            newDocument.setField("historyDriver",num );
+            // TODO id Водителя
+            newDocument.setField("historyIdDriver",idDriver );
             newDocument.saveDocument(new CallbackDocumentSaved() {
                 @Override
                 public void onDocumentSaved() {
