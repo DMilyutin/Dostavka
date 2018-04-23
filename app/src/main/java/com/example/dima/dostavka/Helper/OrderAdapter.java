@@ -60,7 +60,9 @@ public class OrderAdapter extends BaseAdapter {
                 list.get(position).getFields().get("townCustomer").toString(),
                 list.get(position).getFields().get("coastOrder").toString(),
                 list.get(position).getFields().get("numberOfAddresses").toString(),
-                list.get(position).getId());
+                list.get(position).getId(),
+                list.get(position).getFields().get("addressForDriver").toString());
+
         return order;
     }
 
