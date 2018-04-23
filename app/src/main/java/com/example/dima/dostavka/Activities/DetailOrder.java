@@ -1,7 +1,9 @@
 package com.example.dima.dostavka.Activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -52,7 +54,8 @@ public class DetailOrder extends AppCompatActivity {
     String balanceDriverS;
     Double balanceDriver;
     String[] addrees;
-
+    String time;
+    AlertDialog dlg;
 
     ArrayAdapter<String> adapter;
 
@@ -96,10 +99,6 @@ public class DetailOrder extends AppCompatActivity {
     }
 
     private Boolean provBalance() {
-       //if(balanceDriverSS.startsWith("-")){
-       //    balanceDriver = 0 - Integer.getInteger(balanceDriverSS.substring(1));
-       //}
-       //else balanceDriver = Integer.getInteger(balanceDriverSS);
         Double coast = Double.parseDouble(order.getCoastOrder());
         if(Math.round(balanceDriver - (coast*0.13)) <0){
             Helper.showToast(DetailOrder.this, "Недостаточно средств");
@@ -109,6 +108,7 @@ public class DetailOrder extends AppCompatActivity {
     }
 
     private void clickButton(String textButton){
+
         Query query = new Query(COLLECTION_HISTORY_WORK_BALASHIH);
         query.equalTo("historyIdWork", order.getIdOrder());
         if(textButton == null){return;}
@@ -116,25 +116,19 @@ public class DetailOrder extends AppCompatActivity {
 
         switch (textButton){
             case "Принять заказ" :
-
                 removeOrderFromActivWork(document);
-                addOrderInHistory(order);
-                initList(order.getAddressForDriver());
-                btTakeOrder.setText("Забрал заказ");
-                balance();
-                // Через сколько буду
-                // navigatorStart();
+
                 break;
 
             case "Забрал заказ" :
                 btTakeOrder.setText("Доставил заказ");
-                upDataHistoriStatusOrder(false, query);
+                upDataHistoriStatusOrder(false, query, time);
                 // navigatorStart();
                 break;
             case "Доставил заказ" :
                 address = null;
                 btTakeOrder.setText("Взять заказ");
-                upDataHistoriStatusOrder(true, query);
+                upDataHistoriStatusOrder(true, query, null);
                 onBackPressed();
                 break;
 
@@ -144,14 +138,49 @@ public class DetailOrder extends AppCompatActivity {
 
     }
 
-    private void balance(){
+    private void howMachTime() {
+        final View dialog = getLayoutInflater().inflate(R.layout.time_dialog_detail_order, null);
+        Button bt10Min = dialog.findViewById(R.id.bt10Min);
+        Button bt15Min = dialog.findViewById(R.id.bt15Min);
+        Button bt20Min = dialog.findViewById(R.id.bt20Min);
 
-        Query query = new Query(COLLECTION_DRIVER_BALASHIHA);
-        query.equalTo("balanceDriver", order.getIdOrder());
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setView(dialog).setTitle("Буду на месте через");
 
+            dlg = builder.create();
+            dlg.show();
 
-
+        bt10Min.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addOrderInHistory("Курьер будет через 10 минут");
+                dlg.dismiss();
+            }
+        });
+        bt15Min.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addOrderInHistory("Курьер будет через 15 минут");
+                dlg.dismiss();
+            }
+        });
+        bt20Min.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addOrderInHistory("Курьер будет через 20 минут");
+                dlg.dismiss();
+            }
+        });
     }
+
+    private void addOrderInHistory(String time){
+        addOrderInHistory(order, time);
+        Helper.showToast(DetailOrder.this, time);
+        initList(order.getAddressForDriver());
+        btTakeOrder.setText("Забрал заказ");
+        //navigatorStart();
+    }
+
     private void initList(String addresForDriver) {
         int collAdress = Integer.parseInt(order.getNumberOfAddress());
         addrees = new String[collAdress];
@@ -162,8 +191,10 @@ public class DetailOrder extends AppCompatActivity {
         listDetailOrder.setAdapter(adapter);
     }
 
-    private void upDataHistoriStatusOrder(Boolean b, Query query){
-        Update update = new Update().set("historyStatusOrder", b).set("histori_address_for_driver", order.getAddressForDriver() );
+    private void upDataHistoriStatusOrder(Boolean b, Query query, String time){
+        Update update = new Update().set("historyStatusOrder", b).set("histori_address_for_driver", order.getAddressForDriver())
+                .set("match_time", time);
+
         query.updateDocument(update, new CallbackUpdateDocument() {
             @Override
             public void onUpdateSucceed(ResponseUpdate responseUpdate) {
@@ -191,13 +222,14 @@ public class DetailOrder extends AppCompatActivity {
 
     }
 
-    private void addOrderInHistory(Order order) {
+    private void addOrderInHistory(Order order, String time) {
             //Toast.makeText(DetailOrder.this, num, Toast.LENGTH_SHORT).show();
             newDocument.setField("historyNameCustomer", order.getNameCustomer());
             newDocument.setField("historyAddressCustomer", order.getAddressCustomer());
             newDocument.setField("historyCoastOrder", order.getCoastOrder());
             newDocument.setField("historyIdWork", order.getIdOrder());
             newDocument.setField("historyIdDriver",idDriver );
+            newDocument.setField("match_time", time);
             newDocument.saveDocument(new CallbackDocumentSaved() {
                 @Override
                 public void onDocumentSaved() {
@@ -213,19 +245,21 @@ public class DetailOrder extends AppCompatActivity {
     }
 
     private void removeOrderFromActivWork(final Document document) {
-
         document.getDocumentById(order.getIdOrder(), new CallbackGetDocumentById() {
         @Override
         public void onDocumentFound(DocumentInfo documentInfo) {
             document.removeDocument(new CallbackRemoveDocument() {
                 @Override
                 public void onRemoveSucceed(ResponseRemove responseRemove) {
+                    howMachTime();
 
                 }
 
                 @Override
                 public void onRemoveFailed(String errorCode, String errorMessage) {
-                    Toast.makeText(DetailOrder.this, errorMessage, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DetailOrder.this, "Заказ умыкнули", Toast.LENGTH_SHORT).show();
+                    onBackPressed();
+
                 }
             });
         }
@@ -243,4 +277,6 @@ public class DetailOrder extends AppCompatActivity {
         coast.setText(order.getCoastOrder());
         address.setText( order.getNumberOfAddress());
     }
+
+
 }
