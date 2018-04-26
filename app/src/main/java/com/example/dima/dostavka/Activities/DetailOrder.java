@@ -17,7 +17,6 @@ import android.widget.Toast;
 
 import com.example.dima.dostavka.Helper.Helper;
 import com.example.dima.dostavka.Helper.Order;
-import com.example.dima.dostavka.Helper.myEnum;
 import com.example.dima.dostavka.R;
 
 import ru.profit_group.scorocode_sdk.Callbacks.CallbackDocumentSaved;
@@ -49,13 +48,14 @@ public class DetailOrder extends AppCompatActivity {
 
     private final Document document = new Document(COLLECTION_WORK_BALASHIHA);
     Document newDocument = new Document(COLLECTION_HISTORY_WORK_BALASHIH);
-    Order order;
+
     String idDriver;
     String balanceDriverS;
     Double balanceDriver;
     String[] addrees;
     String time;
     AlertDialog dlg;
+    Order orderO;
 
     ArrayAdapter<String> adapter;
 
@@ -76,9 +76,10 @@ public class DetailOrder extends AppCompatActivity {
         listDetailOrder = findViewById(R.id.listDetailOrder);
 
         Intent intent = getIntent();
+        orderO = getIntent().getParcelableExtra("Order");
 
         String[] orderS = intent.getStringArrayExtra("Order");
-        order = new Order(orderS[0], orderS[1],orderS[2],orderS[3], orderS[4], orderS[5]);
+        orderO = new Order(orderS[0], orderS[1],orderS[2],orderS[3], orderS[4], orderS[5]);
         idDriver = intent.getStringExtra("IdDriver");
         balanceDriverS = intent.getStringExtra("BalanceDriver");
         balanceDriver = Double.parseDouble(balanceDriverS);
@@ -86,7 +87,7 @@ public class DetailOrder extends AppCompatActivity {
 
 
 
-        getOrderFromIntent(order);
+        getOrderFromIntent(orderO);
 
 
         btTakeOrder.setOnClickListener(new View.OnClickListener() {
@@ -99,7 +100,7 @@ public class DetailOrder extends AppCompatActivity {
     }
 
     private Boolean provBalance() {
-        Double coast = Double.parseDouble(order.getCoastOrder());
+        Double coast = Double.parseDouble(orderO.getCoastOrder());
         if(Math.round(balanceDriver - (coast*0.13)) <0){
             Helper.showToast(DetailOrder.this, "Недостаточно средств");
             return false;
@@ -110,7 +111,8 @@ public class DetailOrder extends AppCompatActivity {
     private void clickButton(String textButton){
 
         Query query = new Query(COLLECTION_HISTORY_WORK_BALASHIH);
-        query.equalTo("historyIdWork", order.getIdOrder());
+
+        query.equalTo("historyIdWork", orderO.getIdOrder());
         if(textButton == null){return;}
         if(!provBalance()){return;}
 
@@ -174,15 +176,15 @@ public class DetailOrder extends AppCompatActivity {
     }
 
     private void addOrderInHistory(String time){
-        addOrderInHistory(order, time);
+        addOrderInHistory(orderO, time);
         Helper.showToast(DetailOrder.this, time);
-        initList(order.getAddressForDriver());
+        initList(orderO.getAddressForDriver());
         btTakeOrder.setText("Забрал заказ");
         //navigatorStart();
     }
 
     private void initList(String addresForDriver) {
-        int collAdress = Integer.parseInt(order.getNumberOfAddress());
+        int collAdress = Integer.parseInt(orderO.getNumberOfAddress());
         addrees = new String[collAdress];
         addrees = addresForDriver.split(";");
 
@@ -192,7 +194,7 @@ public class DetailOrder extends AppCompatActivity {
     }
 
     private void upDataHistoriStatusOrder(Boolean b, Query query, String time){
-        Update update = new Update().set("historyStatusOrder", b).set("histori_address_for_driver", order.getAddressForDriver())
+        Update update = new Update().set("historyStatusOrder", b).set("histori_address_for_driver", orderO.getAddressForDriver())
                 .set("match_time", time);
 
         query.updateDocument(update, new CallbackUpdateDocument() {
@@ -245,7 +247,7 @@ public class DetailOrder extends AppCompatActivity {
     }
 
     private void removeOrderFromActivWork(final Document document) {
-        document.getDocumentById(order.getIdOrder(), new CallbackGetDocumentById() {
+        document.getDocumentById(orderO.getIdOrder(), new CallbackGetDocumentById() {
         @Override
         public void onDocumentFound(DocumentInfo documentInfo) {
             document.removeDocument(new CallbackRemoveDocument() {

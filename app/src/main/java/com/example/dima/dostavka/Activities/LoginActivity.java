@@ -15,7 +15,7 @@ import android.widget.ProgressBar;
 
 import com.example.dima.dostavka.Helper.Driver;
 import com.example.dima.dostavka.Helper.Helper;
-import com.example.dima.dostavka.Helper.myEnum;
+
 import com.example.dima.dostavka.R;
 
 import java.util.List;
@@ -135,7 +135,6 @@ public class LoginActivity extends AppCompatActivity {
         String login = preferences.getString(SAVED_TEXT_NUMBER, "");
         if (!login.isEmpty()){
             edLogin.setText(login);
-            //chSave.setChecked(true);
             return true;
         }
         else return false;

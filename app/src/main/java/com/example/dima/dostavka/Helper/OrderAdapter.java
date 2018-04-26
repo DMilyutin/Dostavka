@@ -56,8 +56,9 @@ public class OrderAdapter extends BaseAdapter {
 
     public Order getOrder(int position){
 
+
         Order order = new Order(list.get(position).getFields().get("nameCustomer").toString(),
-                list.get(position).getFields().get("townCustomer").toString(),
+                list.get(position).getFields().get("addressCustomer").toString(),
                 list.get(position).getFields().get("coastOrder").toString(),
                 list.get(position).getFields().get("numberOfAddresses").toString(),
                 list.get(position).getId(),

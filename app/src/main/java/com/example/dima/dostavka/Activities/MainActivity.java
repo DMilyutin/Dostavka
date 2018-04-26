@@ -6,14 +6,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.AdapterView;
-import android.widget.CompoundButton;
+
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
-import android.widget.Switch;
+
 import android.widget.TextView;
 
 import com.example.dima.dostavka.Helper.OrderAdapter;
@@ -30,6 +32,7 @@ import ru.profit_group.scorocode_sdk.scorocode_objects.Query;
 public class MainActivity extends AppCompatActivity {
 
 
+
     public static Driver driver = new Driver("","","","","",
             "","");
 
@@ -41,33 +44,16 @@ public class MainActivity extends AppCompatActivity {
     private Adapter adapterT;
     private TextView tvBalance;
 
-
-    private Switch aSwitch;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        aSwitch = findViewById(R.id.swOnline);
         tvBalance = findViewById(R.id.tvBalanceMainActivity);
         listMainActivity = findViewById(R.id.listMainActivity);
 
         Intent intent = getIntent();
         String login = intent.getStringExtra("login");
-
-        aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b) {
-                   new MyRunnable();
-                } else{
-                    //myRunnable.stop();
-                     }
-
-            }
-        });
-
 
        identification(login);
 
@@ -83,15 +69,17 @@ public class MainActivity extends AppCompatActivity {
     private void startDetailOrder(Order order){
         Intent intent = new Intent(MainActivity.this, DetailOrder.class);
 
+
+
         String[] orderS = {order.getNameCustomer(), order.getAddressCustomer(),
                 order.getCoastOrder(), order.getNumberOfAddress(),
                 order.getIdOrder(), order.getAddressForDriver()};
+
 
         intent.putExtra("Order", orderS);
         intent.putExtra("IdDriver", driver.getId());
         intent.putExtra("BalanceDriver", driver.getBalanceDriver());
 
-        //Helper.showToast(MainActivity.this, (String.valueOf(driver.getBalanceDriver())));
         startActivity(intent);
     }
 
@@ -127,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void identification(String login){
         Query query = new Query(COLLECTION_DRIVERS_BALASHIHA);
-        query.equalTo("telephonNamber", login);
+        query.equalTo("phoneNumber", login);
         query.findDocuments(new CallbackFindDocument() {
             @Override
             public void onDocumentFound(List<DocumentInfo> documentInfos) {
@@ -143,44 +131,60 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initDriver(List<DocumentInfo> documentInfos){
-        DocumentInfo documentInfo = new DocumentInfo();
+        DocumentInfo documentInfo;
         documentInfo = documentInfos.get(0);
-        driver.setId(            documentInfo.getId());
-        //driver.setNameDriver(    documentInfo.getFields().get("nameDriver").toString());
-        //driver.setLastNameDriver(documentInfo.getFields().get("lastNameDriver").toString());
-        //driver.setCarDriver(     documentInfo.getFields().get("telephonNamber").toString());
-        //driver.setCarNumber(     documentInfo.getFields().get("carDriver").toString());
-        //driver.setTelephonNamber(documentInfo.getFields().get("carNumber").toString());
-        //driver.setBalanceDriver((NumberdocumentInfo.getFields().get("balanceDriver")));
+        driver.setId(documentInfo.getId());
         driver.setBalanceDriver(documentInfo.getString("balanceDriver"));
-       // orderAcсesS(Integer.getInteger(driver.getBalanceDriver()));
         tvBalance.setText(driver.getBalanceDriver());
     }
 
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        startWork();
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_activity, menu);
+        return true;
+
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id){
+            case R.id.historiItem : {
+                Intent intent = new Intent(MainActivity.this, historyActivity.class);
+                intent.putExtra("IdDriver", driver.getId());
+                startActivity(intent);
+            }
+        }
+
+        return true;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        new MyRunnable();
+    }
 
     class MyRunnable implements Runnable{
     Thread thread;
+
 
     MyRunnable(){
         thread = new Thread(this, "Поток обновления");
         Log.i("Loog", "Второй поток");
         thread.start();
+
     }
 
-    public void stop(){
-        thread.stop();
+    private void stop() throws InterruptedException {
+    thread.join();
     }
         @Override
         public void run() {
 
-            for (int i = 5; i > 0; i++) {
+            for (int i = 5; i < 9; i++) {
+
                 Log.i("Loog", "Второй поток: " + i);
                 startWork();
                 try {
@@ -189,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.i("Loog", "Второй поток прерван " + i);
                 }
             }
-    }
+        }
 
 }
 

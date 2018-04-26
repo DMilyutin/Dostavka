@@ -19,7 +19,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".Activities.MainActivity" />
-        <activity android:name=".Activities.DetailOrder"></activity>
+        <activity android:name=".Activities.DetailOrder" />
+        <activity
+            android:name=".Activities.SettingsActivity"
+            android:label="@string/title_activity_settings" />
+        <activity android:name=".Activities.historyActivity"></activity>
     </application>
 
 </manifest>

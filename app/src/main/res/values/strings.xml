@@ -13,11 +13,53 @@
     <string name="rub">Р</string>
     <!-- -->
     <string name="fieldNameCustomer">nameCustomer</string>
-    <string name="fieldTownCustomer">townCustomer</string>
+    <string name="fieldTownCustomer">addressCustomer</string>
     <string name="fieldCoastOrder">coastOrder</string>
     <!-- -->
     <string name="btOrderDetail">Принять заказ</string>
     <string name="tvDoctavkaOrderDetail">Доставок: </string>
+    <string name="title_activity_settings">Settings</string>
 
 
+
+
+    <!-- Названия коллекций и их поля -->
+    <string name="COLLECTION_WORK_BALASHIHA">work_balashiha</string>
+    <string name="ADDRESS_CUSTOMER">addressCustomer</string>
+    <string name="ADDRESS_FOR_DRIVER">addressForDriver</string>
+    <string name="COAST_ORDER">coastOrder</string>
+    <string name="NAME_FOR_DRIVER">nameForDriver</string>
+    <string name="NUMBER_OF_ADDRESSES">numberOfAddresses</string>
+    <string name="PHONE_CUSTOMER">phoneCustomer</string>
+    <string name="PHONE_FOR_DRIVER">phoneForDriver</string>
+    <string name="STATUS_ORDER">statusOrder</string>
+    <string name="TIME_FILING_CUSTOMER">timeFilingCustomer</string>
+    <string name="TIME_FILING_DRIVER">timeFilingDriver</string>
+    <string name="ID">_id</string>
+
+
+    <string name="COLLECTION_HISTORY_WORK_BALASHIHA">history_work_balashiha</string>
+    <string name="HISTORY_ADDRESS_FOR_DRIVER">history_address_for_driver</string>
+    <string name="HISTORY_ADDRESS_CUSTOMER">historyAddressCustomer</string>
+    <string name="HISTORY_COAST_ORDER">historyCoastOrder</string>
+    <string name="HISTORY_ID_DRIVER">historyIdDriver</string>
+    <string name="HISTORY_ID_WORK">historyIdWork</string>
+    <string name="HISTORY_NAME_CUSTOMER">historyNameCustomer</string>
+    <string name="HISTORY_STATUS_ORDER">historyStatusOrder</string>
+    <string name="MATCH_TIME">match_time</string>
+
+
+
+    <string name="COLLECTION_DRIVERS_BALASHIHA">drivers_balashiha</string>
+    <string name="BALANCE_DRIVER">balanceDriver </string>
+    <string name="CAR_DRIVER">carDriver</string>
+    <string name="CAR_NUMBER">carNumber</string>
+    <string name="LAST_NAME_DRIVER">lastNameDriver</string>
+    <string name="NAME_DRIVER">nameDriver</string>
+    <string name="PHONE_NUMBER">phoneNumber</string>
+
+
+    <string name="COLLECTION_CUSTOMERS_BALASHIHA">customer_balashiha</string>
+    <string name="LOGIN_CUSTOMER">loginCustomer</string>
+    <string name="NAME_CUSTOMER">nameCustomer</string>
 </resources>
