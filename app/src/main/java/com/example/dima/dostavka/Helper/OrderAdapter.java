@@ -61,9 +61,8 @@ public class OrderAdapter extends BaseAdapter {
                 list.get(position).getFields().get("addressCustomer").toString(),
                 list.get(position).getFields().get("coastOrder").toString(),
                 list.get(position).getFields().get("numberOfAddresses").toString(),
-                list.get(position).getId(),
-                list.get(position).getFields().get("addressForDriver").toString());
-
+                list.get(position).getId());
+        order.setIdForWorkBalashiha(list.get(position).getFields().get("idForWorkBalashiha").toString());
         return order;
     }
 

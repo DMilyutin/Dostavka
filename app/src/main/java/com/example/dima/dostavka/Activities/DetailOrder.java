@@ -1,25 +1,30 @@
 package com.example.dima.dostavka.Activities;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.method.QwertyKeyListener;
+import android.util.Log;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.dima.dostavka.Helper.Helper;
+import com.example.dima.dostavka.Helper.InfoForDetail;
 import com.example.dima.dostavka.Helper.Order;
+import com.example.dima.dostavka.Helper.OrderDetailAdapter;
 import com.example.dima.dostavka.R;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ru.profit_group.scorocode_sdk.Callbacks.CallbackDocumentSaved;
+import ru.profit_group.scorocode_sdk.Callbacks.CallbackFindDocument;
 import ru.profit_group.scorocode_sdk.Callbacks.CallbackGetDocumentById;
 import ru.profit_group.scorocode_sdk.Callbacks.CallbackRemoveDocument;
 import ru.profit_group.scorocode_sdk.Callbacks.CallbackUpdateDocument;
@@ -42,6 +47,7 @@ public class DetailOrder extends AppCompatActivity {
 
     private String COLLECTION_HISTORY_WORK_BALASHIH = "history_work_balashiha";
     private String COLLECTION_WORK_BALASHIHA = "work_balashiha";
+    private String COLLECTION_FOR_WORK_BALASHIHA = "for_work_balashiha";
     private String COLLECTION_DRIVER_BALASHIHA = "drivers_balashiha";
 
 
@@ -57,7 +63,11 @@ public class DetailOrder extends AppCompatActivity {
     AlertDialog dlg;
     Order orderO;
 
-    ArrayAdapter<String> adapter;
+
+
+
+
+    OrderDetailAdapter adapter;
 
     private String latForMap = "55.7979";
     private String lonForMap = "37.9375";
@@ -76,10 +86,12 @@ public class DetailOrder extends AppCompatActivity {
         listDetailOrder = findViewById(R.id.listDetailOrder);
 
         Intent intent = getIntent();
-        orderO = getIntent().getParcelableExtra("Order");
+        //orderO = getIntent().getParcelableExtra("Order");
 
         String[] orderS = intent.getStringArrayExtra("Order");
-        orderO = new Order(orderS[0], orderS[1],orderS[2],orderS[3], orderS[4], orderS[5]);
+        orderO = new Order(orderS[0], orderS[1],orderS[2],orderS[3], orderS[4]);
+        orderO.setIdForWorkBalashiha(orderS[5]);
+
         idDriver = intent.getStringExtra("IdDriver");
         balanceDriverS = intent.getStringExtra("BalanceDriver");
         balanceDriver = Double.parseDouble(balanceDriverS);
@@ -110,27 +122,28 @@ public class DetailOrder extends AppCompatActivity {
 
     private void clickButton(String textButton){
 
-        Query query = new Query(COLLECTION_HISTORY_WORK_BALASHIH);
+        //Query query = new Query(COLLECTION_HISTORY_WORK_BALASHIH);
+        //query.equalTo("historyIdWork", orderO.getIdOrder());
 
-        query.equalTo("historyIdWork", orderO.getIdOrder());
         if(textButton == null){return;}
         if(!provBalance()){return;}
 
         switch (textButton){
             case "Принять заказ" :
                 removeOrderFromActivWork(document);
-
+                btTakeOrder.setText("Забрал заказ");
                 break;
 
             case "Забрал заказ" :
                 btTakeOrder.setText("Доставил заказ");
-                upDataHistoriStatusOrder(false, query, time);
+                getOllInfo();
+                //upDataHistoriStatusOrder(false, query, time);
                 // navigatorStart();
                 break;
             case "Доставил заказ" :
                 address = null;
                 btTakeOrder.setText("Взять заказ");
-                upDataHistoriStatusOrder(true, query, null);
+               // upDataHistoriStatusOrder(true, query, null);
                 onBackPressed();
                 break;
 
@@ -155,43 +168,101 @@ public class DetailOrder extends AppCompatActivity {
         bt10Min.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addOrderInHistory("Курьер будет через 10 минут");
+                addOrderInForWorkBalashiha("Курьер будет через 10 минут");
                 dlg.dismiss();
             }
         });
         bt15Min.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addOrderInHistory("Курьер будет через 15 минут");
+                addOrderInForWorkBalashiha("Курьер будет через 15 минут");
                 dlg.dismiss();
             }
         });
         bt20Min.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addOrderInHistory("Курьер будет через 20 минут");
+                addOrderInForWorkBalashiha("Курьер будет через 20 минут");
                 dlg.dismiss();
             }
         });
     }
 
-    private void addOrderInHistory(String time){
-        addOrderInHistory(orderO, time);
-        Helper.showToast(DetailOrder.this, time);
-        initList(orderO.getAddressForDriver());
-        btTakeOrder.setText("Забрал заказ");
+    private void addOrderInForWorkBalashiha(String time){
+        Log.i("Loog", "Время выбрано");
+        updataForWork(time);
+
+        //initList(orderO.getAddressForDriver());
         //navigatorStart();
+        btTakeOrder.setText("Забрал заказ");
     }
 
-    private void initList(String addresForDriver) {
-        int collAdress = Integer.parseInt(orderO.getNumberOfAddress());
-        addrees = new String[collAdress];
-        addrees = addresForDriver.split(";");
+    private void getOllInfo() {
+        Query query = new Query(COLLECTION_FOR_WORK_BALASHIHA);
+        query.equalTo("_id", orderO.getIdForWorkBalashiha());
+        query.findDocuments(new CallbackFindDocument() {
+            @Override
+            public void onDocumentFound(List<DocumentInfo> documentInfos) {
+                Log.i("Loog", "гет олл инфо нашел документ");
+                Log.i("Loog", documentInfos.get(0).getFields().get("nameForDriver").toString());
+                initOllInfo(documentInfos.get(0).getFields().get("nameForDriver").toString(),
+                      documentInfos.get(0).getFields().get("addressForDriver").toString(),
+                      documentInfos.get(0).getFields().get("phoneForDriver").toString());
+            }
 
-        adapter = new  ArrayAdapter<>(
-                this, android.R.layout.simple_expandable_list_item_1, addrees);
+            @Override
+            public void onDocumentNotFound(String errorCode, String errorMessage) {
+                Log.i("Loog", "гет олл инфо ошибка");
+            }
+        });
+
+
+
+    }
+
+    private void initOllInfo(String nameForDrive, String addressForDriver, String phoneForDriver) {
+        Log.i("Loog", "инит олл инфо принял ");
+        Log.i("Loog", nameForDrive);
+        ArrayList<InfoForDetail> listInfo = new ArrayList<>();
+        int collAdress = Integer.parseInt(orderO.getNumberOfAddress());
+        String[] names    ;
+        String[] addresses ;
+        String[] phones   ;
+        names = nameForDrive.split(";");
+        addresses= addressForDriver.split(";");
+        phones= phoneForDriver.split(";");
+        for(int i = 0; i<collAdress; i++){
+
+            InfoForDetail infoForDetail = new InfoForDetail(names[i], addresses[i], phones[i] );
+            Log.i("Loog", infoForDetail.toString());
+            listInfo.add(infoForDetail);
+        }
+        adapter = new OrderDetailAdapter(this, listInfo);
         listDetailOrder.setAdapter(adapter);
     }
+
+    private void updataForWork(String filing){
+        Query query = new Query(COLLECTION_FOR_WORK_BALASHIHA);
+        query.equalTo("_id", orderO.getIdForWorkBalashiha());
+        Update update = new Update();
+        update.set("timeFilingDriver", filing).set("idDriver", idDriver)
+                .set("statusOrder", "Выполняется");
+        query.updateDocument(update, new CallbackUpdateDocument() {
+            @Override
+            public void onUpdateSucceed(ResponseUpdate responseUpdate) {
+                    Log.i("Loog", "документ изменен");
+
+            }
+
+            @Override
+            public void onUpdateFailed(String errorCode, String errorMessage) {
+
+            }
+        });
+
+        //query.findDocuments();
+    }
+
 
     private void upDataHistoriStatusOrder(Boolean b, Query query, String time){
         Update update = new Update().set("historyStatusOrder", b).set("histori_address_for_driver", orderO.getAddressForDriver())
@@ -224,7 +295,7 @@ public class DetailOrder extends AppCompatActivity {
 
     }
 
-    private void addOrderInHistory(Order order, String time) {
+    private void addOrderInForWorkBalashiha(Order order, String time) {
             //Toast.makeText(DetailOrder.this, num, Toast.LENGTH_SHORT).show();
             newDocument.setField("historyNameCustomer", order.getNameCustomer());
             newDocument.setField("historyAddressCustomer", order.getAddressCustomer());
@@ -243,7 +314,6 @@ public class DetailOrder extends AppCompatActivity {
                     Helper.showToast(DetailOrder.this, errorMessage);
                 }
             });
-
     }
 
     private void removeOrderFromActivWork(final Document document) {

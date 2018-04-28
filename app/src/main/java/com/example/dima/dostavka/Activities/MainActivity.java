@@ -73,12 +73,13 @@ public class MainActivity extends AppCompatActivity {
 
         String[] orderS = {order.getNameCustomer(), order.getAddressCustomer(),
                 order.getCoastOrder(), order.getNumberOfAddress(),
-                order.getIdOrder(), order.getAddressForDriver()};
+                order.getIdOrder(), order.getAddressForDriver(), order.getIdForWorkBalashiha()};
 
 
         intent.putExtra("Order", orderS);
         intent.putExtra("IdDriver", driver.getId());
         intent.putExtra("BalanceDriver", driver.getBalanceDriver());
+
 
         startActivity(intent);
     }
