@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    android:background="@color/colorCofe1"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -74,6 +76,33 @@
                 android:textSize="20sp"
                 app:layout_constraintStart_toEndOf="@+id/tvTownCustomerDetail1"
                 app:layout_constraintTop_toBottomOf="@+id/townCustomerDetail" />
+
+
+            <TextView
+
+                android:layout_width="15dp"
+                android:layout_height="wrap_content"
+
+                android:textColor="@color/colorText"
+                android:textSize="20sp"
+                app:layout_constraintStart_toEndOf="@+id/tvTownCustomerDetail1"
+                app:layout_constraintTop_toBottomOf="@+id/townCustomerDetail" />
+
+            <ImageView
+                android:id="@+id/imageView4"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                app:srcCompat="@drawable/ic_access_time_yelloy24dp" />
+
+            <TextView
+                android:id="@+id/tvCountTimeFilingCustomerDetail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorText"
+                android:textSize="20sp"
+                app:layout_constraintStart_toEndOf="@+id/tvTownCustomerDetail1"
+                app:layout_constraintTop_toBottomOf="@+id/townCustomerDetail" />
+
         </LinearLayout>
 
 
@@ -114,6 +143,7 @@
 
 
         <Button
+            android:background="@drawable/button"
             android:id="@+id/btTakeOrderDetail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

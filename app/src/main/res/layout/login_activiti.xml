@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    android:background="@color/colorCofe1"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -10,10 +12,10 @@
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="76dp"
         android:text="@string/tvLoginActivityLogin"
         android:textColor="@color/colorText"
-        android:textSize="20sp"
+        android:textSize="25sp"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -25,23 +27,28 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="32dp"
-        android:ems="10"
+        android:layout_marginTop="36dp"
+        android:background="@drawable/ed_fields"
+        android:ems="8"
         android:inputType="phone"
-        android:text=""
+        android:textAlignment="center"
+        android:textColor="@color/colorText"
+        android:textSize="23sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
 
     <Button
+
         android:id="@+id/btLobin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="100dp"
+        android:background="@drawable/button"
+        android:duplicateParentState="false"
         android:text="@string/btLoginActivityPass"
         android:textColor="@color/colorText"
         android:textSize="15sp"
@@ -49,7 +56,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.989"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edLogin" />
+        app:layout_constraintTop_toBottomOf="@+id/edLogin"
+        app:layout_constraintVertical_bias="0.383" />
 
 
     <ProgressBar

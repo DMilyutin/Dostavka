@@ -43,29 +43,20 @@ public class DetailOrder extends AppCompatActivity {
     private TextView town;
     private TextView coast;
     private TextView address;
+    private TextView timeFiling;
     private Button btTakeOrder;
 
-    private String COLLECTION_HISTORY_WORK_BALASHIH = "history_work_balashiha";
     private String COLLECTION_WORK_BALASHIHA = "work_balashiha";
     private String COLLECTION_FOR_WORK_BALASHIHA = "for_work_balashiha";
     private String COLLECTION_DRIVER_BALASHIHA = "drivers_balashiha";
 
-
-
     private final Document document = new Document(COLLECTION_WORK_BALASHIHA);
-    Document newDocument = new Document(COLLECTION_HISTORY_WORK_BALASHIH);
 
     String idDriver;
     String balanceDriverS;
     Double balanceDriver;
-    String[] addrees;
-    String time;
     AlertDialog dlg;
     Order orderO;
-
-
-
-
 
     OrderDetailAdapter adapter;
 
@@ -84,23 +75,22 @@ public class DetailOrder extends AppCompatActivity {
         address = findViewById(R.id.tvCountOrderCustomerDetail);
         btTakeOrder = findViewById(R.id.btTakeOrderDetail);
         listDetailOrder = findViewById(R.id.listDetailOrder);
+        timeFiling = findViewById(R.id.tvCountTimeFilingCustomerDetail);
 
         Intent intent = getIntent();
-        //orderO = getIntent().getParcelableExtra("Order");
 
         String[] orderS = intent.getStringArrayExtra("Order");
-        orderO = new Order(orderS[0], orderS[1],orderS[2],orderS[3], orderS[4]);
-        orderO.setIdForWorkBalashiha(orderS[5]);
+
+        orderO = new Order(orderS[0], orderS[1],orderS[2],orderS[3], orderS[4], orderS[5]);
+        orderO.setTimeFilingCustomer(orderS[6]);
+
+
 
         idDriver = intent.getStringExtra("IdDriver");
         balanceDriverS = intent.getStringExtra("BalanceDriver");
         balanceDriver = Double.parseDouble(balanceDriverS);
 
-
-
-
         getOrderFromIntent(orderO);
-
 
         btTakeOrder.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,9 +112,6 @@ public class DetailOrder extends AppCompatActivity {
 
     private void clickButton(String textButton){
 
-        //Query query = new Query(COLLECTION_HISTORY_WORK_BALASHIH);
-        //query.equalTo("historyIdWork", orderO.getIdOrder());
-
         if(textButton == null){return;}
         if(!provBalance()){return;}
 
@@ -137,20 +124,85 @@ public class DetailOrder extends AppCompatActivity {
             case "Забрал заказ" :
                 btTakeOrder.setText("Доставил заказ");
                 getOllInfo();
-                //upDataHistoriStatusOrder(false, query, time);
                 // navigatorStart();
                 break;
             case "Доставил заказ" :
                 address = null;
-                btTakeOrder.setText("Взять заказ");
-               // upDataHistoriStatusOrder(true, query, null);
-                onBackPressed();
+                closeOrder();
+
+
                 break;
 
             default: Helper.showToast(DetailOrder.this, "Не известно");
             break;
         }
 
+    }
+
+    private void closeOrder() {
+        Query query = new Query(COLLECTION_FOR_WORK_BALASHIHA);
+        query.equalTo("_id", orderO.getIdForWorkBalashiha());
+
+        Update update = new Update();
+        update.set("statusOrder", "Завершен");
+
+        query.updateDocument(update, new CallbackUpdateDocument() {
+            @Override
+            public void onUpdateSucceed(ResponseUpdate responseUpdate) {
+
+                correktBalance();
+            }
+
+            @Override
+            public void onUpdateFailed(String errorCode, String errorMessage) {
+                Log.i("Loog", "Ошибка clouseOrder");
+            }
+        });
+    }
+
+    private void correktBalance() {
+
+        Query query = new Query(COLLECTION_DRIVER_BALASHIHA);
+        query.equalTo("_id", idDriver);
+        query.findDocuments(new CallbackFindDocument() {
+            @Override
+            public void onDocumentFound(List<DocumentInfo> documentInfos) {
+                String st = (documentInfos.get(0).getFields().get("balanceDriver").toString());
+                Double v = Double.parseDouble(st);
+                updateBalance(v);
+            }
+
+            @Override
+            public void onDocumentNotFound(String errorCode, String errorMessage) {
+                Log.i("Loog", "Ошибка корректа баланса");
+            }
+        });
+    }
+
+    private void updateBalance(Double v) {
+        Double coastOrder = Double.parseDouble(orderO.getCoastOrder());
+        long finishBalance = (long) (v - coastOrder*0.11);
+        finishBalance = Math.round(finishBalance);
+
+
+        Query query = new Query(COLLECTION_DRIVER_BALASHIHA);
+        query.equalTo("_id", idDriver);
+
+        Update update = new Update();
+        update.set("balanceDriver", finishBalance);
+
+        query.updateDocument(update, new CallbackUpdateDocument() {
+            @Override
+            public void onUpdateSucceed(ResponseUpdate responseUpdate) {
+                Toast.makeText(DetailOrder.this, "Заказ успешно выполнен", Toast.LENGTH_SHORT).show();
+                onBackPressed();
+            }
+
+            @Override
+            public void onUpdateFailed(String errorCode, String errorMessage) {
+                Toast.makeText(DetailOrder.this, "Ошибка закрытия заказа", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void howMachTime() {
@@ -164,6 +216,8 @@ public class DetailOrder extends AppCompatActivity {
 
             dlg = builder.create();
             dlg.show();
+
+            //dlg.getWindow().setBackgroundDrawableResource(R.color.colorCofe1);
 
         bt10Min.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -189,12 +243,9 @@ public class DetailOrder extends AppCompatActivity {
     }
 
     private void addOrderInForWorkBalashiha(String time){
-        Log.i("Loog", "Время выбрано");
         updataForWork(time);
-
-        //initList(orderO.getAddressForDriver());
         //navigatorStart();
-        btTakeOrder.setText("Забрал заказ");
+       //btTakeOrder.setText("Забрал заказ");
     }
 
     private void getOllInfo() {
@@ -203,8 +254,6 @@ public class DetailOrder extends AppCompatActivity {
         query.findDocuments(new CallbackFindDocument() {
             @Override
             public void onDocumentFound(List<DocumentInfo> documentInfos) {
-                Log.i("Loog", "гет олл инфо нашел документ");
-                Log.i("Loog", documentInfos.get(0).getFields().get("nameForDriver").toString());
                 initOllInfo(documentInfos.get(0).getFields().get("nameForDriver").toString(),
                       documentInfos.get(0).getFields().get("addressForDriver").toString(),
                       documentInfos.get(0).getFields().get("phoneForDriver").toString());
@@ -221,8 +270,6 @@ public class DetailOrder extends AppCompatActivity {
     }
 
     private void initOllInfo(String nameForDrive, String addressForDriver, String phoneForDriver) {
-        Log.i("Loog", "инит олл инфо принял ");
-        Log.i("Loog", nameForDrive);
         ArrayList<InfoForDetail> listInfo = new ArrayList<>();
         int collAdress = Integer.parseInt(orderO.getNumberOfAddress());
         String[] names    ;
@@ -242,45 +289,25 @@ public class DetailOrder extends AppCompatActivity {
     }
 
     private void updataForWork(String filing){
-        Query query = new Query(COLLECTION_FOR_WORK_BALASHIHA);
-        query.equalTo("_id", orderO.getIdForWorkBalashiha());
-        Update update = new Update();
-        update.set("timeFilingDriver", filing).set("idDriver", idDriver)
+        Query query1 = new Query(COLLECTION_FOR_WORK_BALASHIHA);
+        query1.equalTo("_id", orderO.getIdForWorkBalashiha());
+
+        Update update1 = new Update();
+        update1.set("timeFilingDriver", filing).set("idDriver", idDriver)
                 .set("statusOrder", "Выполняется");
-        query.updateDocument(update, new CallbackUpdateDocument() {
+
+        query1.updateDocument(update1, new CallbackUpdateDocument() {
             @Override
             public void onUpdateSucceed(ResponseUpdate responseUpdate) {
                     Log.i("Loog", "документ изменен");
-
             }
-
             @Override
             public void onUpdateFailed(String errorCode, String errorMessage) {
 
             }
         });
 
-        //query.findDocuments();
     }
-
-
-    private void upDataHistoriStatusOrder(Boolean b, Query query, String time){
-        Update update = new Update().set("historyStatusOrder", b).set("histori_address_for_driver", orderO.getAddressForDriver())
-                .set("match_time", time);
-
-        query.updateDocument(update, new CallbackUpdateDocument() {
-            @Override
-            public void onUpdateSucceed(ResponseUpdate responseUpdate) {
-
-            }
-
-            @Override
-            public void onUpdateFailed(String errorCode, String errorMessage) {
-                Helper.showToast(DetailOrder.this, errorMessage);
-            }
-        });
-    }
-
 
 
     private void navigatorStart() {
@@ -295,26 +322,6 @@ public class DetailOrder extends AppCompatActivity {
 
     }
 
-    private void addOrderInForWorkBalashiha(Order order, String time) {
-            //Toast.makeText(DetailOrder.this, num, Toast.LENGTH_SHORT).show();
-            newDocument.setField("historyNameCustomer", order.getNameCustomer());
-            newDocument.setField("historyAddressCustomer", order.getAddressCustomer());
-            newDocument.setField("historyCoastOrder", order.getCoastOrder());
-            newDocument.setField("historyIdWork", order.getIdOrder());
-            newDocument.setField("historyIdDriver",idDriver );
-            newDocument.setField("match_time", time);
-            newDocument.saveDocument(new CallbackDocumentSaved() {
-                @Override
-                public void onDocumentSaved() {
-
-                }
-
-                @Override
-                public void onDocumentSaveFailed(String errorCode, String errorMessage) {
-                    Helper.showToast(DetailOrder.this, errorMessage);
-                }
-            });
-    }
 
     private void removeOrderFromActivWork(final Document document) {
         document.getDocumentById(orderO.getIdOrder(), new CallbackGetDocumentById() {
@@ -324,7 +331,6 @@ public class DetailOrder extends AppCompatActivity {
                 @Override
                 public void onRemoveSucceed(ResponseRemove responseRemove) {
                     howMachTime();
-
                 }
 
                 @Override
@@ -348,7 +354,7 @@ public class DetailOrder extends AppCompatActivity {
         town.setText(order.getAddressCustomer());
         coast.setText(order.getCoastOrder());
         address.setText( order.getNumberOfAddress());
+        timeFiling.setText(order.getTimeFilingCustomer());
     }
-
 
 }

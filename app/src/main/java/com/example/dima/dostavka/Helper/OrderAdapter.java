@@ -50,19 +50,19 @@ public class OrderAdapter extends BaseAdapter {
         ((TextView) view.findViewById(R.id.tvAddressList)).setText(orgerForList.getAddressCustomer());
         ((TextView) view.findViewById(R.id.tvCoastList)).setText(orgerForList.getCoastOrder());
         ((TextView) view.findViewById(R.id.tvNumberOfAddressList)).setText(orgerForList.getNumberOfAddress());
-
+        ((TextView) view.findViewById(R.id.tvTimeFilingCustomerForMainList))
+                .setText(orgerForList.getTimeFilingCustomer());
         return view;
     }
 
     public Order getOrder(int position){
-
-
         Order order = new Order(list.get(position).getFields().get("nameCustomer").toString(),
                 list.get(position).getFields().get("addressCustomer").toString(),
                 list.get(position).getFields().get("coastOrder").toString(),
                 list.get(position).getFields().get("numberOfAddresses").toString(),
-                list.get(position).getId());
-        order.setIdForWorkBalashiha(list.get(position).getFields().get("idForWorkBalashiha").toString());
+                list.get(position).getId(),
+                list.get(position).getFields().get("idForWorkBalashiha").toString());
+        order.setTimeFilingCustomer(list.get(position).getFields().get("timeFilingCustomer").toString());
         return order;
     }
 

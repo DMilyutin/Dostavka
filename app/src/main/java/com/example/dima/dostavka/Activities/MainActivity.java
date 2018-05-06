@@ -73,8 +73,7 @@ public class MainActivity extends AppCompatActivity {
 
         String[] orderS = {order.getNameCustomer(), order.getAddressCustomer(),
                 order.getCoastOrder(), order.getNumberOfAddress(),
-                order.getIdOrder(), order.getAddressForDriver(), order.getIdForWorkBalashiha()};
-
+                order.getIdOrder(), order.getIdForWorkBalashiha(), order.getTimeFilingCustomer()};
 
         intent.putExtra("Order", orderS);
         intent.putExtra("IdDriver", driver.getId());
@@ -166,6 +165,19 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         new MyRunnable();
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     class MyRunnable implements Runnable{
     Thread thread;

@@ -11,18 +11,25 @@ public class Order {
     private String addressForDriver;
     private String namesForDriver;
     private String phonesForDriver;
+    private String timeFilingCustomer;
 
 
-    public Order(String name, String address, String coast, String numOfAddress, String iD
-                 ) {
+
+
+
+
+    public Order(String name, String address, String coast, String numOfAddress, String iD, String idForWorkBalashiha1) {
         id = iD;
         nameCustomer = name;
         addressCustomer = address;
         coastOrder = coast;
         numberOfAddress = numOfAddress;
-
+        idForWorkBalashiha = idForWorkBalashiha1;
     }
 
+    public String getTimeFilingCustomer() { return timeFilingCustomer; }
+
+    public void setTimeFilingCustomer(String timeFilingCustomer) { this.timeFilingCustomer = timeFilingCustomer; }
 
     public String getIdForWorkBalashiha() {
         return idForWorkBalashiha;
