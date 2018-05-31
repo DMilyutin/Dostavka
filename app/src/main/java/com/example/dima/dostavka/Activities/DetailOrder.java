@@ -1,5 +1,6 @@
 package com.example.dima.dostavka.Activities;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AlertDialog;
@@ -7,6 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.QwertyKeyListener;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -205,14 +208,26 @@ public class DetailOrder extends AppCompatActivity {
         });
     }
 
+
     private void howMachTime() {
+        String timeF = timeFiling.getText().toString();
         final View dialog = getLayoutInflater().inflate(R.layout.time_dialog_detail_order, null);
+
         Button bt10Min = dialog.findViewById(R.id.bt10Min);
         Button bt15Min = dialog.findViewById(R.id.bt15Min);
         Button bt20Min = dialog.findViewById(R.id.bt20Min);
+        Button btFilCustomer = dialog.findViewById(R.id.btTimeFildCustomer);
 
+        if(!timeF.equals("Ближайшее время")){
+            bt10Min.setVisibility(View.INVISIBLE);
+            bt15Min.setVisibility(View.INVISIBLE);
+            bt20Min.setVisibility(View.INVISIBLE);
+        }
+        else {
+            btFilCustomer.setVisibility(View.INVISIBLE);
+        }
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setView(dialog).setTitle("Буду на месте через");
+            builder.setView(dialog);
 
             dlg = builder.create();
             dlg.show();
@@ -240,6 +255,14 @@ public class DetailOrder extends AppCompatActivity {
                 dlg.dismiss();
             }
         });
+        btFilCustomer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addOrderInForWorkBalashiha("Курьер будет к назначенному времени");
+                dlg.dismiss();
+            }
+        });
+        dlg.getWindow().setBackgroundDrawableResource(R.color.colorPrimaryDark);
     }
 
     private void addOrderInForWorkBalashiha(String time){
@@ -355,6 +378,28 @@ public class DetailOrder extends AppCompatActivity {
         coast.setText(order.getCoastOrder());
         address.setText( order.getNumberOfAddress());
         timeFiling.setText(order.getTimeFilingCustomer());
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.detail_menu, menu);
+        return true;
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id){
+            case R.id.detailItem : {
+                Helper.showToast(this, "В разработке");
+                //Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
+                //intent.putExtra("IdDriver", driver.getId());
+                //startActivity(intent);
+            }
+        }
+
+        return true;
     }
 
 }

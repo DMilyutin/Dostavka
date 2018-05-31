@@ -2,6 +2,7 @@ package com.example.dima.dostavka.Activities;
 
 import android.content.Intent;
 
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -12,13 +13,15 @@ import android.view.View;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
 
 import android.widget.TextView;
 
-import com.example.dima.dostavka.Helper.OrderAdapter;
+import com.example.dima.dostavka.Helper.OrderMainAdapter;
 import com.example.dima.dostavka.R;
 
 import java.util.List;
@@ -40,9 +43,12 @@ public class MainActivity extends AppCompatActivity {
     private static final String COLLECTION_DRIVERS_BALASHIHA = "drivers_balashiha";
 
     private ListView listMainActivity;
-    private OrderAdapter adapter;
+    private OrderMainAdapter adapter;
     private Adapter adapterT;
     private TextView tvBalance;
+    private ImageView infoBalance;
+
+    AlertDialog dlg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
 
         tvBalance = findViewById(R.id.tvBalanceMainActivity);
         listMainActivity = findViewById(R.id.listMainActivity);
+        infoBalance = findViewById(R.id.ivInfoBalance);
 
         Intent intent = getIntent();
         String login = intent.getStringExtra("login");
@@ -63,6 +70,34 @@ public class MainActivity extends AppCompatActivity {
                     Order order = adapter.getOrder(i);
                     startDetailOrder(order); }
         });
+
+        infoBalance.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showBalanceDialog();
+            }
+        });
+    }
+
+    private void showBalanceDialog() {
+        String s ="  Если на вашем балансе менее 10% от стоимости доставки,"
+                +"то вы не сможете приянть его. "
+                +"Пополнить баланс можно в терменале QIVI на кошелек 89251459197";
+
+        final View dialog = getLayoutInflater().inflate(R.layout.info_balance_dialog, null);
+        TextView tvInfo = dialog.findViewById(R.id.tvInfoBalanceOnDialog);
+        tvInfo.setText(s);
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(dialog);
+
+        dlg = builder.create();
+        dlg.show();
+
+
+
+        //dlg.getWindow().set
+        //dlg.getWindow().setBackgroundDrawableResource(R.color.colorPrimaryDark);
 
     }
 
@@ -106,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void setAdapter(List<DocumentInfo> documentInfos) {
-        adapter = new OrderAdapter(this, documentInfos);
+        adapter = new OrderMainAdapter(this, documentInfos);
         listMainActivity.setAdapter(adapter);
     }
 
@@ -151,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
         switch (id){
             case R.id.historiItem : {
-                Intent intent = new Intent(MainActivity.this, historyActivity.class);
+                Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
                 intent.putExtra("IdDriver", driver.getId());
                 startActivity(intent);
             }

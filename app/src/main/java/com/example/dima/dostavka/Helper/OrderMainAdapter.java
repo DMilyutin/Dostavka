@@ -13,13 +13,13 @@ import java.util.List;
 
 import ru.profit_group.scorocode_sdk.scorocode_objects.DocumentInfo;
 
-public class OrderAdapter extends BaseAdapter {
+public class OrderMainAdapter extends BaseAdapter {
 
 
     LayoutInflater inflater;
     List<DocumentInfo> list;
 
-    public OrderAdapter(Context context1, List<DocumentInfo> list1){
+    public OrderMainAdapter(Context context1, List<DocumentInfo> list1){
         list = list1;
         inflater = (LayoutInflater) context1.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
