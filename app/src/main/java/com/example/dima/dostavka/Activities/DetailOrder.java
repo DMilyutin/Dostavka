@@ -1,8 +1,12 @@
 package com.example.dima.dostavka.Activities;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,6 +15,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -49,6 +54,7 @@ public class DetailOrder extends AppCompatActivity {
     private TextView timeFiling;
     private Button btTakeOrder;
 
+    private static final int PERMISSIONS_PHONE_CALL = 70;
     private String COLLECTION_WORK_BALASHIHA = "work_balashiha";
     private String COLLECTION_FOR_WORK_BALASHIHA = "for_work_balashiha";
     private String COLLECTION_DRIVER_BALASHIHA = "drivers_balashiha";
@@ -84,9 +90,8 @@ public class DetailOrder extends AppCompatActivity {
 
         String[] orderS = intent.getStringArrayExtra("Order");
 
-        orderO = new Order(orderS[0], orderS[1],orderS[2],orderS[3], orderS[4], orderS[5]);
+        orderO = new Order(orderS[0], orderS[1], orderS[2], orderS[3], orderS[4], orderS[5]);
         orderO.setTimeFilingCustomer(orderS[6]);
-
 
 
         idDriver = intent.getStringExtra("IdDriver");
@@ -102,9 +107,57 @@ public class DetailOrder extends AppCompatActivity {
             }
         });
 
+        listDetailOrder.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                InfoForDetail info = adapter.getIndoDetail(i);
+
+                if (!info.getAddress().equals("Не указано") && !info.getPhone().equals("Не указано")) {
+                    whatDo(info);
+
+                }
+            }
+        });
+
     }
 
-    private Boolean provBalance() {
+    private void whatDo(final InfoForDetail info) {
+
+        final View dialog = getLayoutInflater().inflate(R.layout.what_do_dialog_detail, null);
+
+        Button btColl = dialog.findViewById(R.id.btColl);
+        Button btStartNav = dialog.findViewById(R.id.btStartAdr);
+
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(dialog);
+
+        dlg = builder.create();
+        dlg.show();
+
+
+        btStartNav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                navigatorStart(info.getAddress());
+            }
+        });
+
+        btColl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent collIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + info.getPhone()));
+
+                if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.M &&
+                        checkSelfPermission(Manifest.permission.CALL_PHONE)!= PackageManager.PERMISSION_GRANTED){
+                    requestPermissions(new String[]{Manifest.permission.CALL_PHONE}, PERMISSIONS_PHONE_CALL);
+                }
+                startActivity(collIntent);
+            }
+        });
+    }
+
+    private Boolean provBalance() { // Метод проверки баланса
         Double coast = Double.parseDouble(orderO.getCoastOrder());
         if(Math.round(balanceDriver - (coast*0.13)) <0){
             Helper.showToast(DetailOrder.this, "Недостаточно средств");
@@ -142,7 +195,7 @@ public class DetailOrder extends AppCompatActivity {
 
     }
 
-    private void closeOrder() {
+    private void closeOrder() { // Метод завершения доставки
         Query query = new Query(COLLECTION_FOR_WORK_BALASHIHA);
         query.equalTo("_id", orderO.getIdForWorkBalashiha());
 
@@ -163,7 +216,7 @@ public class DetailOrder extends AppCompatActivity {
         });
     }
 
-    private void correktBalance() {
+    private void correktBalance() { // метод вычитания процента с баланса водителя
 
         Query query = new Query(COLLECTION_DRIVER_BALASHIHA);
         query.equalTo("_id", idDriver);
@@ -182,7 +235,7 @@ public class DetailOrder extends AppCompatActivity {
         });
     }
 
-    private void updateBalance(Double v) {
+    private void updateBalance(Double v) {// загрузка нового баланса на сервер
         Double coastOrder = Double.parseDouble(orderO.getCoastOrder());
         long finishBalance = (long) (v - coastOrder*0.11);
         finishBalance = Math.round(finishBalance);
@@ -209,7 +262,7 @@ public class DetailOrder extends AppCompatActivity {
     }
 
 
-    private void howMachTime() {
+    private void howMachTime() {// Метод определения времени от водителя в диалоге
         String timeF = timeFiling.getText().toString();
         final View dialog = getLayoutInflater().inflate(R.layout.time_dialog_detail_order, null);
 
@@ -265,7 +318,7 @@ public class DetailOrder extends AppCompatActivity {
         dlg.getWindow().setBackgroundDrawableResource(R.color.colorPrimaryDark);
     }
 
-    private void addOrderInForWorkBalashiha(String time){
+    private void addOrderInForWorkBalashiha(String time){ //Назначение водителя на заказ
         updataForWork(time);
         //navigatorStart();
        //btTakeOrder.setText("Забрал заказ");
@@ -333,20 +386,17 @@ public class DetailOrder extends AppCompatActivity {
     }
 
 
-    private void navigatorStart() {
-        Uri uri = Uri.parse("yandexnavi://show_point_on_map").buildUpon()
-                .appendQueryParameter("lat", latForMap)
-                .appendQueryParameter("lon", lonForMap).build();
+    private void navigatorStart(String adr) {
+        //String adr = "Балашиха, проспект Ленина 21";
 
+        String uri1 = "geo:0,0?q=" + adr  ;
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri1));
 
-        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-        intent.setPackage("ru.yandex.yandexnavi");
-        startActivity(intent);
-
+        startActivity(mapIntent);
     }
 
 
-    private void removeOrderFromActivWork(final Document document) {
+    private void removeOrderFromActivWork(final Document document) {// удаление заказа из таблицы поиска водителя
         document.getDocumentById(orderO.getIdOrder(), new CallbackGetDocumentById() {
         @Override
         public void onDocumentFound(DocumentInfo documentInfo) {
@@ -372,7 +422,7 @@ public class DetailOrder extends AppCompatActivity {
     });
     }
 
-    private void getOrderFromIntent(Order order){
+    private void getOrderFromIntent(Order order){ //метод преобразования данных заказа с прошлой активити
         name.setText(order.getNameCustomer());
         town.setText(order.getAddressCustomer());
         coast.setText(order.getCoastOrder());

@@ -48,7 +48,7 @@ public class OrderDetailAdapter extends BaseAdapter {
         InfoForDetail info = getIndoDetail(i);
 
         ((TextView) view.findViewById(R.id.tvAddressForListDetail)).setText(info.getAddress());
-        view.findViewById(R.id.imageView);
+        //view.findViewById(R.id.imageView);
         view.findViewById(R.id.imageView2);
 
 
