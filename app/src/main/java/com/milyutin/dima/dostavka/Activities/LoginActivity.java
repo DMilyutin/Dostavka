@@ -9,23 +9,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
-import com.example.dima.dostavka.Helper.Driver;
 import com.example.dima.dostavka.Helper.Helper;
 
 import com.example.dima.dostavka.R;
 
-import java.util.List;
-
-import ru.profit_group.scorocode_sdk.Callbacks.CallbackFindDocument;
 import ru.profit_group.scorocode_sdk.Callbacks.CallbackLoginUser;
 import ru.profit_group.scorocode_sdk.Responses.user.ResponseLogin;
 import ru.profit_group.scorocode_sdk.ScorocodeSdk;
-import ru.profit_group.scorocode_sdk.scorocode_objects.DocumentInfo;
-import ru.profit_group.scorocode_sdk.scorocode_objects.Query;
 import ru.profit_group.scorocode_sdk.scorocode_objects.User;
 
 public class LoginActivity extends AppCompatActivity {

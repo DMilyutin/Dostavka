@@ -13,12 +13,13 @@ import android.view.View;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 
-import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
 
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.example.dima.dostavka.Helper.OrderMainAdapter;
@@ -47,7 +48,10 @@ public class MainActivity extends AppCompatActivity {
     private Adapter adapterT;
     private TextView tvBalance;
     private ImageView infoBalance;
+    private Switch isWork;
 
+    private String login;
+    private MyRunnable mRun;
     AlertDialog dlg;
 
     @Override
@@ -58,9 +62,10 @@ public class MainActivity extends AppCompatActivity {
         tvBalance = findViewById(R.id.tvBalanceMainActivity);
         listMainActivity = findViewById(R.id.listMainActivity);
         infoBalance = findViewById(R.id.ivInfoBalance);
+        isWork = findViewById(R.id.swIsWork);
 
         Intent intent = getIntent();
-        String login = intent.getStringExtra("login");
+         login = intent.getStringExtra("login");
 
        identification(login);
 
@@ -68,7 +73,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     Order order = adapter.getOrder(i);
-                    startDetailOrder(order); }
+                try {
+                    mRun.stopp();
+                    isWork.setChecked(false);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                startDetailOrder(order); }
         });
 
         infoBalance.setOnClickListener(new View.OnClickListener() {
@@ -77,12 +88,34 @@ public class MainActivity extends AppCompatActivity {
                 showBalanceDialog();
             }
         });
+
+        isWork.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(b){
+                    isWork.setText("Работа");
+                    //startService(new Intent(MainActivity.this, ServiceForMainAct.class));
+                    mRun = new MyRunnable();
+                }
+                if(!b){
+                    //isWork.setText("Отдых");
+                    //stopService(new Intent(MainActivity.this, ServiceForMainAct.class));
+                    try {
+                        mRun.stopp();
+                        listMainActivity.setAdapter((ListAdapter) adapterT);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
     }
 
     private void showBalanceDialog() {
-        String s ="  Если на вашем балансе менее 10% от стоимости доставки,"
-                +"то вы не сможете приянть его. "
-                +"Пополнить баланс можно в терменале QIVI на кошелек 89251459197";
+        String s ="Если на вашем балансе менее 10% от стоимости заказа,"
+                +" то вы не сможете приянть его. "
+                +"Для пополнения баланса переведите сумму на Qiwi кошелек 89251459197"
+                +" с указанным номером телефона в комментариях";
 
         final View dialog = getLayoutInflater().inflate(R.layout.info_balance_dialog, null);
         TextView tvInfo = dialog.findViewById(R.id.tvInfoBalanceOnDialog);
@@ -148,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    private void identification(String login){
+    private void identification(String login){ // Запрос в бд данных водителя
         Query query = new Query(COLLECTION_DRIVERS_BALASHIHA);
         query.equalTo("phoneNumber", login);
         query.findDocuments(new CallbackFindDocument() {
@@ -195,24 +228,21 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+
+
     @Override
     protected void onStart() {
         super.onStart();
-        new MyRunnable();
+        identification(login);
+        //new MyRunnable();
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        isWork.setChecked(true);
+    }
 
     class MyRunnable implements Runnable{
     Thread thread;
@@ -222,24 +252,27 @@ public class MainActivity extends AppCompatActivity {
         thread = new Thread(this, "Поток обновления");
         Log.i("Loog", "Второй поток");
         thread.start();
-
     }
 
-    private void stop() throws InterruptedException {
-    thread.join();
+    private void stopp() throws InterruptedException {
+    thread.interrupt();
     }
         @Override
         public void run() {
-
-            for (int i = 5; i < 9; i++) {
-
-                Log.i("Loog", "Второй поток: " + i);
+           // int i;
+            try {
+            for (; ; ) {
+                if(!thread.isInterrupted()){
+                Log.i("Loog", "Второй поток: ");
                 startWork();
-                try {
-                    Thread.sleep(30000);
-                } catch (InterruptedException e) {
-                    Log.i("Loog", "Второй поток прерван " + i);
+                thread.sleep(30000);
+                }else{
+                    throw new InterruptedException();
                 }
+            }
+
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
 

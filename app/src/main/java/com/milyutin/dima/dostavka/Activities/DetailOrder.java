@@ -6,17 +6,14 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.method.QwertyKeyListener;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -31,7 +28,6 @@ import com.example.dima.dostavka.R;
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.profit_group.scorocode_sdk.Callbacks.CallbackDocumentSaved;
 import ru.profit_group.scorocode_sdk.Callbacks.CallbackFindDocument;
 import ru.profit_group.scorocode_sdk.Callbacks.CallbackGetDocumentById;
 import ru.profit_group.scorocode_sdk.Callbacks.CallbackRemoveDocument;
@@ -151,6 +147,8 @@ public class DetailOrder extends AppCompatActivity {
                 if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.M &&
                         checkSelfPermission(Manifest.permission.CALL_PHONE)!= PackageManager.PERMISSION_GRANTED){
                     requestPermissions(new String[]{Manifest.permission.CALL_PHONE}, PERMISSIONS_PHONE_CALL);
+
+
                 }
                 startActivity(collIntent);
             }
@@ -252,6 +250,7 @@ public class DetailOrder extends AppCompatActivity {
             public void onUpdateSucceed(ResponseUpdate responseUpdate) {
                 Toast.makeText(DetailOrder.this, "Заказ успешно выполнен", Toast.LENGTH_SHORT).show();
                 onBackPressed();
+
             }
 
             @Override
@@ -284,7 +283,7 @@ public class DetailOrder extends AppCompatActivity {
 
             dlg = builder.create();
             dlg.show();
-
+            dlg.setCanceledOnTouchOutside(false);
             //dlg.getWindow().setBackgroundDrawableResource(R.color.colorCofe1);
 
         bt10Min.setOnClickListener(new View.OnClickListener() {
@@ -320,8 +319,7 @@ public class DetailOrder extends AppCompatActivity {
 
     private void addOrderInForWorkBalashiha(String time){ //Назначение водителя на заказ
         updataForWork(time);
-        //navigatorStart();
-       //btTakeOrder.setText("Забрал заказ");
+
     }
 
     private void getOllInfo() {
@@ -387,11 +385,8 @@ public class DetailOrder extends AppCompatActivity {
 
 
     private void navigatorStart(String adr) {
-        //String adr = "Балашиха, проспект Ленина 21";
-
         String uri1 = "geo:0,0?q=" + adr  ;
         Intent mapIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri1));
-
         startActivity(mapIntent);
     }
 
@@ -437,19 +432,56 @@ public class DetailOrder extends AppCompatActivity {
 
     }
 
+    @SuppressLint("MissingPermission")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id){
             case R.id.detailItem : {
-                Helper.showToast(this, "В разработке");
-                //Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
-                //intent.putExtra("IdDriver", driver.getId());
-                //startActivity(intent);
+                Intent collIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:89251459197" ));
+                startActivity(collIntent);
             }
         }
 
         return true;
     }
 
+    private boolean showDialogCloseOrder(){
+        Boolean close = true;
+        final View dialog = getLayoutInflater().inflate(R.layout.close_order_dialog_detail, null);
+
+        Button btClYes = dialog.findViewById(R.id.btCloseOrderYes);
+        Button btClNo = dialog.findViewById(R.id.btCloseOrderNo);
+
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(dialog);
+
+        dlg = builder.create();
+        dlg.show();
+        dlg.setCanceledOnTouchOutside(false);
+
+        btClNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dlg.dismiss();
+            }
+        });
+
+        btClYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            }
+        });
+        return close;
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        if((btTakeOrder.getText().toString()).equals("Принять заказ")){super.onBackPressed();}
+           if ((btTakeOrder.getText().toString()).equals("Доставил заказ")){ super.onBackPressed();
+        }
+        else Toast.makeText(DetailOrder.this, "Необходимо выполнить заказ", Toast.LENGTH_SHORT).show();
+    }
 }
