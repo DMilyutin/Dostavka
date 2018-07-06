@@ -1,13 +1,13 @@
-package com.example.dima.dostavka.Activities;
+package com.milyutin.dima.dostavka.Activities;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ListView;
 
-import com.example.dima.dostavka.Helper.Helper;
-import com.example.dima.dostavka.Helper.HistoryOrderAdapter;
-import com.example.dima.dostavka.R;
+import com.milyutin.dima.dostavka.Helper.Helper;
+import com.milyutin.dima.dostavka.Helper.HistoryOrderAdapter;
+import com.milyutin.dima.dostavka.R;
 
 import java.util.List;
 

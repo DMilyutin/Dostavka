@@ -1,4 +1,4 @@
-package com.example.dima.dostavka.Activities;
+package com.milyutin.dima.dostavka.Activities;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -19,11 +19,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.dima.dostavka.Helper.Helper;
-import com.example.dima.dostavka.Helper.InfoForDetail;
-import com.example.dima.dostavka.Helper.Order;
-import com.example.dima.dostavka.Helper.OrderDetailAdapter;
-import com.example.dima.dostavka.R;
+import com.milyutin.dima.dostavka.Helper.Helper;
+import com.milyutin.dima.dostavka.Helper.Order;
+import com.milyutin.dima.dostavka.*;
+
+import com.milyutin.dima.dostavka.Helper.InfoForDetail;
+import com.milyutin.dima.dostavka.Helper.OrderDetailAdapter;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -119,7 +121,7 @@ public class DetailOrder extends AppCompatActivity {
 
     private void whatDo(final InfoForDetail info) {
 
-        final View dialog = getLayoutInflater().inflate(R.layout.what_do_dialog_detail, null);
+        final View dialog = getLayoutInflater().inflate(R.layout.dialog_detail_what_do, null);
 
         Button btColl = dialog.findViewById(R.id.btColl);
         Button btStartNav = dialog.findViewById(R.id.btStartAdr);
@@ -263,7 +265,7 @@ public class DetailOrder extends AppCompatActivity {
 
     private void howMachTime() {// Метод определения времени от водителя в диалоге
         String timeF = timeFiling.getText().toString();
-        final View dialog = getLayoutInflater().inflate(R.layout.time_dialog_detail_order, null);
+        final View dialog = getLayoutInflater().inflate(R.layout.detail_order_choos_time, null);
 
         Button bt10Min = dialog.findViewById(R.id.bt10Min);
         Button bt15Min = dialog.findViewById(R.id.bt15Min);
@@ -446,9 +448,9 @@ public class DetailOrder extends AppCompatActivity {
         return true;
     }
 
-    private boolean showDialogCloseOrder(){
+/*    private boolean showDialogCloseOrder(){
         Boolean close = true;
-        final View dialog = getLayoutInflater().inflate(R.layout.close_order_dialog_detail, null);
+        final View dialog = getLayoutInflater().inflate(R.layout.dialog_detail_close_order, null);
 
         Button btClYes = dialog.findViewById(R.id.btCloseOrderYes);
         Button btClNo = dialog.findViewById(R.id.btCloseOrderNo);
@@ -474,7 +476,7 @@ public class DetailOrder extends AppCompatActivity {
             }
         });
         return close;
-    }
+    }*/
 
 
     @Override

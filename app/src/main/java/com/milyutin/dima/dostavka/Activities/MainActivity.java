@@ -1,4 +1,4 @@
-package com.example.dima.dostavka.Activities;
+package com.milyutin.dima.dostavka.Activities;
 
 import android.content.Intent;
 
@@ -22,12 +22,12 @@ import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.example.dima.dostavka.Helper.OrderMainAdapter;
-import com.example.dima.dostavka.R;
+import com.milyutin.dima.dostavka.Helper.OrderMainAdapter;
+import com.milyutin.dima.dostavka.R;
 
 import java.util.List;
 
-import com.example.dima.dostavka.Helper.*;
+import com.milyutin.dima.dostavka.Helper.*;
 
 import ru.profit_group.scorocode_sdk.Callbacks.CallbackFindDocument;
 import ru.profit_group.scorocode_sdk.scorocode_objects.DocumentInfo;
@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    public static Driver driver = new Driver("","","","","",
+    Driver driver = new Driver("","","","","",
             "","");
 
     private static final String COLLECTION_WORK_BALASHIHA = "work_balashiha";
@@ -94,12 +94,12 @@ public class MainActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if(b){
                     isWork.setText("Работа");
-                    //startService(new Intent(MainActivity.this, ServiceForMainAct.class));
+
                     mRun = new MyRunnable();
                 }
                 if(!b){
                     //isWork.setText("Отдых");
-                    //stopService(new Intent(MainActivity.this, ServiceForMainAct.class));
+
                     try {
                         mRun.stopp();
                         listMainActivity.setAdapter((ListAdapter) adapterT);
@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
                 +"Для пополнения баланса переведите сумму на Qiwi кошелек 89251459197"
                 +" с указанным номером телефона в комментариях";
 
-        final View dialog = getLayoutInflater().inflate(R.layout.info_balance_dialog, null);
+        final View dialog = getLayoutInflater().inflate(R.layout.dialog_info_balance, null);
         TextView tvInfo = dialog.findViewById(R.id.tvInfoBalanceOnDialog);
         tvInfo.setText(s);
 

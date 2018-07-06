@@ -1,4 +1,4 @@
-package com.example.dima.dostavka.Activities;
+package com.milyutin.dima.dostavka.Activities;
 
 import android.Manifest;
 import android.content.Intent;
@@ -12,9 +12,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
-import com.example.dima.dostavka.Helper.Helper;
+import com.milyutin.dima.dostavka.Helper.Helper;
 
-import com.example.dima.dostavka.R;
+import com.milyutin.dima.dostavka.R;
 
 import ru.profit_group.scorocode_sdk.Callbacks.CallbackLoginUser;
 import ru.profit_group.scorocode_sdk.Responses.user.ResponseLogin;
@@ -43,7 +43,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login_activiti);
+        setContentView(R.layout.activiti_login);
 
            edLogin =  findViewById(R.id.edLogin);
            btLogin = findViewById(R.id.btLobin);

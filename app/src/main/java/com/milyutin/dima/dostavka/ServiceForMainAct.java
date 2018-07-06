@@ -1,4 +1,4 @@
-package com.example.dima.dostavka;
+package com.milyutin.dima.dostavka;
 
 import android.app.Service;
 import android.content.Intent;
@@ -6,7 +6,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.example.dima.dostavka.Activities.MainActivity;
+import com.milyutin.dima.dostavka.Activities.MainActivity;
 
 public class ServiceForMainAct extends Service{
 

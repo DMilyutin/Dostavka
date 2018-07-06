@@ -1,5 +1,4 @@
-package com.example.dima.dostavka.Helper;
-
+package com.milyutin.dima.dostavka.Helper;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,7 +6,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 import java.util.ArrayList;
-import com.example.dima.dostavka.R;
+import com.milyutin.dima.dostavka.R;
 
 
 
@@ -42,7 +41,7 @@ public class OrderDetailAdapter extends BaseAdapter {
     @Override
     public View getView(int i, View view1, ViewGroup viewGroup) {
         View view = view1;
-        if(view == null){view = inflater.inflate(R.layout.for_list_detail_order, viewGroup, false);}
+        if(view == null){view = inflater.inflate(R.layout.for_adapter_detail_order, viewGroup, false);}
 
         InfoForDetail info = getIndoDetail(i);
 

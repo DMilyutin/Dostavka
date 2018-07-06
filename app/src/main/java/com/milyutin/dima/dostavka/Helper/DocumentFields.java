@@ -1,9 +1,9 @@
-package com.example.dima.dostavka.Helper;
+package com.milyutin.dima.dostavka.Helper;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-import com.example.dima.dostavka.R;
+import com.milyutin.dima.dostavka.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

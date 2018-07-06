@@ -1,4 +1,4 @@
-package com.example.dima.dostavka.Helper;
+package com.milyutin.dima.dostavka.Helper;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.example.dima.dostavka.R;
+import com.milyutin.dima.dostavka.R;
 
 import java.util.List;
 
@@ -42,7 +42,7 @@ public class OrderMainAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View view1, ViewGroup viewGroup) {
         View view = view1;
-        if(view == null){view = inflater.inflate(R.layout.for_list_main_activity, viewGroup, false);}
+        if(view == null){view = inflater.inflate(R.layout.for_adapter_main_activity, viewGroup, false);}
 
         Order orgerForList = getOrder(position);
 

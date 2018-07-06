@@ -1,4 +1,4 @@
-package com.example.dima.dostavka.Helper;
+package com.milyutin.dima.dostavka.Helper;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,7 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.dima.dostavka.R;
+import com.milyutin.dima.dostavka.R;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -53,7 +53,7 @@ public class HistoryOrderAdapter  extends BaseAdapter{
             res = R.drawable.ic_leave_green_24dp;
 
         View view = view1;
-        if(view == null){view = inflater.inflate(R.layout.for_list_history, viewGroup, false);}
+        if(view == null){view = inflater.inflate(R.layout.for_adapter_history, viewGroup, false);}
 
         String dat = format.format(list.get(i).getDate("createdAt"));
 
@@ -68,7 +68,7 @@ public class HistoryOrderAdapter  extends BaseAdapter{
         return view;
     }
 
-    public Order getHistoryOrder(int position){
+    Order getHistoryOrder(int position){
         Order order = new Order(list.get(position).getFields().get("nameCustomer").toString(),
                 list.get(position).getFields().get("addressCustomer").toString(),
                 list.get(position).getFields().get("coastOrder").toString(),
