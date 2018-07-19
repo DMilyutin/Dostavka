@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">YouDelivery</string>
+    <string name="app_name">YouDelivery Work</string>
     <string name="title_activity_main">MainActivity</string>
     <!-- -->
     <string name="tvLoginActivityLogin">Номер телефона</string>

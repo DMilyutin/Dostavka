@@ -159,7 +159,7 @@ public class DetailOrder extends AppCompatActivity {
 
     private Boolean provBalance() { // Метод проверки баланса
         Double coast = Double.parseDouble(orderO.getCoastOrder());
-        if(Math.round(balanceDriver - (coast*0.13)) <0){
+        if(Math.round(balanceDriver - (coast*0.11)) <0){
             Helper.showToast(DetailOrder.this, "Недостаточно средств");
             return false;
         }
@@ -205,8 +205,8 @@ public class DetailOrder extends AppCompatActivity {
         query.updateDocument(update, new CallbackUpdateDocument() {
             @Override
             public void onUpdateSucceed(ResponseUpdate responseUpdate) {
-
-                correktBalance();
+                onBackPressed();        // Todo корректировка баланса
+               // correktBalance();
             }
 
             @Override
@@ -237,7 +237,7 @@ public class DetailOrder extends AppCompatActivity {
 
     private void updateBalance(Double v) {// загрузка нового баланса на сервер
         Double coastOrder = Double.parseDouble(orderO.getCoastOrder());
-        long finishBalance = (long) (v - coastOrder*0.11);
+        long finishBalance = (long) (v - coastOrder*0.10);
         finishBalance = Math.round(finishBalance);
 
 

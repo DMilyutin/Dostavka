@@ -28,6 +28,7 @@ public class LoginActivity extends AppCompatActivity {
     private static final String MASTER_KEY = "ec67c7fce9fb4f63a234d2d708f3a9c6";
 
     private static final int PERMISSIONS_INTERNET = 60;
+    private static final int PERMISSIONS_PHONE_CALL = 70;
 
     private SharedPreferences preferences;
 
@@ -110,6 +111,13 @@ public class LoginActivity extends AppCompatActivity {
                 checkSelfPermission(Manifest.permission.INTERNET)!= PackageManager.PERMISSION_GRANTED){
             requestPermissions(new String[]{Manifest.permission.INTERNET}, PERMISSIONS_INTERNET);
             }
+
+        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.M &&
+                checkSelfPermission(Manifest.permission.CALL_PHONE)!= PackageManager.PERMISSION_GRANTED){
+            requestPermissions(new String[]{Manifest.permission.CALL_PHONE}, PERMISSIONS_PHONE_CALL);
+
+
+        }
 
     }
 

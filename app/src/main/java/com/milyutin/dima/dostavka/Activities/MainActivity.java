@@ -1,7 +1,16 @@
 package com.milyutin.dima.dostavka.Activities;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Intent;
 
+import android.graphics.Color;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.os.Build;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -30,8 +39,13 @@ import java.util.List;
 import com.milyutin.dima.dostavka.Helper.*;
 
 import ru.profit_group.scorocode_sdk.Callbacks.CallbackFindDocument;
+import ru.profit_group.scorocode_sdk.Callbacks.CallbackUpdateDocument;
+import ru.profit_group.scorocode_sdk.Responses.data.ResponseUpdate;
 import ru.profit_group.scorocode_sdk.scorocode_objects.DocumentInfo;
 import ru.profit_group.scorocode_sdk.scorocode_objects.Query;
+import ru.profit_group.scorocode_sdk.scorocode_objects.Update;
+
+import static android.app.Notification.PRIORITY_MAX;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -85,7 +99,8 @@ public class MainActivity extends AppCompatActivity {
         infoBalance.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showBalanceDialog();
+                //showBalanceDialog();
+                Helper.showToast(MainActivity.this, "Работа без процентов");
             }
         });
 
@@ -94,19 +109,41 @@ public class MainActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if(b){
                     isWork.setText("Работа");
-
+                    statusWorking(true);
                     mRun = new MyRunnable();
                 }
                 if(!b){
-                    //isWork.setText("Отдых");
 
+                    isWork.setText("Отдых");
+                    statusWorking(false);
                     try {
                         mRun.stopp();
                         listMainActivity.setAdapter((ListAdapter) adapterT);
+
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
+            }
+        });
+    }
+
+    private void statusWorking(boolean b) {
+        Query query = new Query(COLLECTION_DRIVERS_BALASHIHA);
+        query.equalTo("_id", driver.getId());
+
+        Update update = new Update();
+        update.set("statusWork", b);
+
+        query.updateDocument(update, new CallbackUpdateDocument() {
+            @Override
+            public void onUpdateSucceed(ResponseUpdate responseUpdate) {
+
+            }
+
+            @Override
+            public void onUpdateFailed(String errorCode, String errorMessage) {
+
             }
         });
     }
@@ -126,11 +163,6 @@ public class MainActivity extends AppCompatActivity {
 
         dlg = builder.create();
         dlg.show();
-
-
-
-        //dlg.getWindow().set
-        //dlg.getWindow().setBackgroundDrawableResource(R.color.colorPrimaryDark);
 
     }
 
@@ -156,6 +188,7 @@ public class MainActivity extends AppCompatActivity {
         query.findDocuments(new CallbackFindDocument() {
             @Override
             public void onDocumentFound(List<DocumentInfo> documentInfos) {
+                notifycation();
                 setAdapter(documentInfos);
 
             }
@@ -164,8 +197,7 @@ public class MainActivity extends AppCompatActivity {
             public void onDocumentNotFound(String errorCode, String errorMessage) {
                 if (errorCode.equals("0")) {
                     listMainActivity.setAdapter((ListAdapter) adapterT);
-
-                    //Helper.showToast(MainActivity.this, "Заказов нет");}
+                    Helper.showToast(MainActivity.this, "Заказов нет");
                 }
                 else Helper.showToast(MainActivity.this, errorMessage);
             }
@@ -228,6 +260,31 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+
+    private void notifycation(){
+        Uri ringURI =
+                RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(android.R.drawable.ic_dialog_email)
+                        .setContentTitle("YouDelivery")
+                        .setContentText("Есть доступные заказы")
+                        .setLights(Color.GREEN, 1000,500)
+                        .setPriority(PRIORITY_MAX)
+                        .setSound(ringURI);
+
+        Notification notification = builder.build();
+
+        if(Build.VERSION.SDK_INT >= 26){
+            ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE));
+        }else {
+            ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(1000);
+        }
+
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.notify(1, notification);
+    }
 
 
     @Override
