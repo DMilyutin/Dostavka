@@ -157,19 +157,19 @@ public class DetailOrder extends AppCompatActivity {
         });
     }
 
-    private Boolean provBalance() { // Метод проверки баланса
-        Double coast = Double.parseDouble(orderO.getCoastOrder());
-        if(Math.round(balanceDriver - (coast*0.11)) <0){
-            Helper.showToast(DetailOrder.this, "Недостаточно средств");
-            return false;
-        }
-        else return true;
-    }
+   //private Boolean provBalance() { // Метод проверки баланса
+   //    Double coast = Double.parseDouble(orderO.getCoastOrder());
+   //    if(Math.round(balanceDriver - (coast*0.11)) <0){
+   //        Helper.showToast(DetailOrder.this, "Недостаточно средств");
+   //        return false;
+   //    }
+   //    else return true;
+   //}
 
     private void clickButton(String textButton){
 
         if(textButton == null){return;}
-        if(!provBalance()){return;}
+        //if(!provBalance()){return;}
 
         switch (textButton){
             case "Принять заказ" :
@@ -180,7 +180,6 @@ public class DetailOrder extends AppCompatActivity {
             case "Забрал заказ" :
                 btTakeOrder.setText("Доставил заказ");
                 getOllInfo();
-                // navigatorStart();
                 break;
             case "Доставил заказ" :
                 address = null;
@@ -205,8 +204,8 @@ public class DetailOrder extends AppCompatActivity {
         query.updateDocument(update, new CallbackUpdateDocument() {
             @Override
             public void onUpdateSucceed(ResponseUpdate responseUpdate) {
-                onBackPressed();        // Todo корректировка баланса
-               // correktBalance();
+
+               correktBalance();
             }
 
             @Override
@@ -216,16 +215,17 @@ public class DetailOrder extends AppCompatActivity {
         });
     }
 
-    private void correktBalance() { // метод вычитания процента с баланса водителя
+    private void correktBalance() { // метод прибавдения баланса водителя
 
         Query query = new Query(COLLECTION_DRIVER_BALASHIHA);
         query.equalTo("_id", idDriver);
         query.findDocuments(new CallbackFindDocument() {
             @Override
             public void onDocumentFound(List<DocumentInfo> documentInfos) {
-                String st = (documentInfos.get(0).getFields().get("balanceDriver").toString());
-                Double v = Double.parseDouble(st);
-                updateBalance(v);
+                String st =  documentInfos.get(0).getFields().get("balanceDriver").toString();
+                int balanceDriver = Integer.valueOf(st);
+                //Double v = Double.parseDouble(st);
+                updateBalance(balanceDriver);
             }
 
             @Override
@@ -235,17 +235,17 @@ public class DetailOrder extends AppCompatActivity {
         });
     }
 
-    private void updateBalance(Double v) {// загрузка нового баланса на сервер
-        Double coastOrder = Double.parseDouble(orderO.getCoastOrder());
-        long finishBalance = (long) (v - coastOrder*0.10);
-        finishBalance = Math.round(finishBalance);
+    private void updateBalance(int balance) {// загрузка нового баланса на сервер
+        int coastOrder = Integer.valueOf(orderO.getCoastOrder());
+        int finishBalance = balance + coastOrder;
+        String ffinishBalance = String.valueOf(finishBalance);
 
 
         Query query = new Query(COLLECTION_DRIVER_BALASHIHA);
         query.equalTo("_id", idDriver);
 
         Update update = new Update();
-        update.set("balanceDriver", finishBalance);
+        update.set("balanceDriver", ffinishBalance);
 
         query.updateDocument(update, new CallbackUpdateDocument() {
             @Override
@@ -286,7 +286,7 @@ public class DetailOrder extends AppCompatActivity {
             dlg = builder.create();
             dlg.show();
             dlg.setCanceledOnTouchOutside(false);
-            //dlg.getWindow().setBackgroundDrawableResource(R.color.colorCofe1);
+
 
         bt10Min.setOnClickListener(new View.OnClickListener() {
             @Override
